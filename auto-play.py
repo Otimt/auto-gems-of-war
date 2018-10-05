@@ -17,7 +17,16 @@ def cat_img(img,xCenter,yCenter,imgWidth,imgHeight):
     imgPart = img[y:(y+imgHeight),x:(x+imgWidth)]
     return imgPart
 
-    
+#初始化我方技能检查图片
+def init_left(leftList):
+    for obj in leftList:
+        if obj["name"]:
+            path = "E:\\work\\auto-gems-of-war\\cast\\"+obj["name"]+".png"
+            print(path)
+            castImg = cv2.imread(path)
+            print(len(castImg))
+            obj["castImg"] = castImg
+    return True
 
     
 hArr = [545,662,780,899,1018,1137,1253,1373]
@@ -70,27 +79,27 @@ dead4Img = cat_img(dead4Img,50,50,100,100)
 leftList = [{
     "x":319,
     "y":189,
-    "name":"",
+    "name":False,
     "target":False,
-    "caseImg":None
+    "castImg":None
 },{
     "x":319,
     "y":442,
     "name":"huozhadan",
     "target":False,
-    "caseImg":None
+    "castImg":None
 },{
     "x":319,
     "y":699,
     "name":"youxia",
     "target":True,
-    "caseImg":None
+    "castImg":None
 },{
     "x":319,
     "y":952,
     "name":"huozhadan",
     "target":False,
-    "caseImg":None
+    "castImg":None
 }]
 #敌方数组
 rightList = [{
@@ -114,9 +123,10 @@ rightList = [{
     "live":True,
     "deadImg":dead4Img
 }]
+init_left(leftList)
 
   
-def prepare():
+def continue_click():
     #点击继续
     m.click(1002,1050)
     time.sleep(0.25)
@@ -129,68 +139,78 @@ def prepare():
     time.sleep(0.25)
 
 
-def casting(x,y,target=False):
-    m.click(x,y)#选中军队
-    time.sleep(0.1)
-    m.click(950,950)#点击施法
-    time.sleep(0.1)
+def casting(leftIndex,target=False):
+    obj = leftList[leftIndex]
+    if(obj["ready"]):
     
-    
-    for obj in rightList:
-        if obj["live"]:
-            #点击敌人
-            m.click(obj["x"],obj["y"])
-            time.sleep(0.1)
-            m.click(1002,1050)
-            time.sleep(0.1)
-    m.click(1002,1050)
-    time.sleep(0.1)
+        m.click(obj["x"],obj["y"])#选中军队
+        time.sleep(0.1)
+        m.click(950,950)#点击施法
+        time.sleep(0.1)
+        
+        
+        for index,obj in enumerate(rightList):
+            print("点击敌人",index,obj["live"])
+            if obj["live"]:
+                m.click(obj["x"],obj["y"])
+                time.sleep(0.1)
+                m.click(1002,1050)
+                time.sleep(0.1)
+        m.click(1002,1050)
+        time.sleep(0.1)
     
     
 #移动一步
 def moveOnce():
-    
-    
     #截屏
     imgPath = "E:\\work\\auto-gems-of-war\\game2.jpg"
     window_capture(imgPath)
     img = cv2.imread(imgPath)
     
-    if checkPrepare(img):
+    if check_prepare(img):
         #准备中
         return True
-    elif checkFight(img):
+    elif check_fight(img):
         #战斗中
-        colorArr = check64(img)
-        moveInfo = find_can_bomb_point(colorArr)
-        if moveInfo:
-            print("moveInfo",moveInfo)
-            x1 = moveInfo["x1"]
-            y1 = moveInfo["y1"]
-            x2 = moveInfo["x2"]
-            y2 = moveInfo["y2"]
-            if moveInfo["weight"] <= 10 and moveInfo["color"]!="w":
+        check_right(img)
+        if not is_all_right_dead():
+            #敌方未全灭
+            check_left(img)
+            colorArr = check64(img)
+            moveInfo = find_can_bomb_point(colorArr)
+            if moveInfo:
+                print("moveInfo",moveInfo)
+                x1 = moveInfo["x1"]
+                y1 = moveInfo["y1"]
+                x2 = moveInfo["x2"]
+                y2 = moveInfo["y2"]
+                if moveInfo["weight"] <= 10 and moveInfo["color"]!="w":
+                    
+                    
+                    casting(2,True)
+                    #casting(1,True)
+                    casting(1)
+                    casting(3)
+                    
+                    
+                    m.click(hArr[x1],vArr[y1])
+                    time.sleep(0.1)
                 
-                
-                casting(300,700,True)
-                #casting(300,200,True)
-                casting(300,400)
-                casting(300,1000)
-                
-                
-                m.click(hArr[x1],vArr[y1])
-                time.sleep(0.1)
-            
-            mouse_drag(hArr[x1],vArr[y1],hArr[x2],vArr[y2])
-            print(hArr[x1],vArr[y1],hArr[x2],vArr[y2])
+                mouse_drag(hArr[x1],vArr[y1],hArr[x2],vArr[y2])
+                print(hArr[x1],vArr[y1],hArr[x2],vArr[y2])
+        else:
+            print("敌方全灭")
+    else:
+        continue_click()
+        
         
 #识别准备===============================================================================================
-def checkPrepare(img):
+def check_prepare(img):
     curPrepareBtn =  cat_img(img,952,1010,200,50)
     if (classify_hist_with_split(curPrepareBtn,prepareBtn)>0.5):
         #准备中
         #重置敌方数组
-        resetRightList()
+        reset_right_list()
         print("检查到准备中")
         #点击继续
         m.click(1002,1050)
@@ -202,17 +222,18 @@ def checkPrepare(img):
         
 
 #重置敌方数组
-def resetRightList():
+def reset_right_list():
     for obj in rightList:
         obj["live"] = True
     
 #识别战斗中界面
-def checkFight(img):
-    #fightLeftImg
-    #fightRightImg
+def check_fight(img):
     leftImg = cat_img(img,55,55,64,64)
     rightImg = cat_img(img,1865,55,64,64)
-    if (classify_hist_with_split(fightLeftImg,leftImg)>0.5) and (classify_hist_with_split(fightRightImg,rightImg)>0.5):
+    left = classify_hist_with_split(fightLeftImg,leftImg)
+    right = classify_hist_with_split(fightRightImg,rightImg)
+    print("识别战斗中界面 left",left,"right",right)
+    if (left>0.5) and (right>0.5):
         print("战斗中中")
         return True
     else :
@@ -220,14 +241,38 @@ def checkFight(img):
         return False
 
 #识别敌方数组
-def chechRight():
+def check_right(img):
+    for index,obj in enumerate(rightList):
+        
+        rightImg = cat_img(img,obj["x"],obj["y"],100,100)
+        deadImg = obj["deadImg"]
+        live = classify_hist_with_split(rightImg,deadImg)
+        if (live>0.5):
+            obj["live"] = False
+        else:
+            obj["live"] = True
+        print("敌人",index,"活着：",obj["live"],live)
     return True
+    
+#敌方全灭否
+def is_all_right_dead():
+    res = True
+    for obj in rightList:
+        res = res and (not obj["live"])
+    print("地方全灭：",res)
+    return res
 
-#初始化我方技能检查图片
-def initLeft():
-    return True
+
+    
 #识别我方数组是否准备好
-def chechLeft():
+def check_left(img):
+    for obj in leftList:
+        if obj["name"]:
+            castImg = obj["castImg"]
+            leftCastImg = cat_img(img,obj["x"],obj["y"],100,100)
+            ready = classify_hist_with_split(castImg,leftCastImg)
+            obj["ready"] = ready
+            print(obj["name"],"ready",ready)
     return True
 
     
