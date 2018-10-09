@@ -6,6 +6,7 @@ import cv2
 import datetime
 import pythoncom
 import pyHook
+import gc
 # import the module
 from pymouse import PyMouse
 m = PyMouse()
@@ -83,25 +84,29 @@ leftList = [{
     "y":189,
     "name":False,
     "target":False,
-    "castImg":None
+    "castImg":None,
+    "order":1
 },{
     "x":319,
     "y":442,
-    "name":"huozhadan",
+    "name":"taiyangniao",
     "target":False,
-    "castImg":None
+    "castImg":None,
+    "order":2
 },{
     "x":319,
     "y":699,
-    "name":"youxia",
+    "name":"huozhadan",
     "target":True,
-    "castImg":None
+    "castImg":None,
+    "order":3
 },{
     "x":319,
     "y":952,
     "name":"huozhadan",
     "target":False,
-    "castImg":None
+    "castImg":None,
+    "order":4
 }]
 #敌方数组
 rightList = [{
@@ -150,14 +155,14 @@ def casting(leftIndex,target=False):
         m.click(950,950)#点击施法
         time.sleep(0.1)
         
-        
-        for index,obj in enumerate(rightList):
-            print("点击敌人",index,obj["live"])
-            if obj["live"]:
-                m.click(obj["x"],obj["y"])
-                time.sleep(0.1)
-                m.click(1002,1020)
-                time.sleep(0.1)
+        if target:
+            for index,obj in enumerate(rightList):
+                print("点击敌人",index,obj["live"])
+                if obj["live"]:
+                    m.click(obj["x"],obj["y"])
+                    time.sleep(0.1)
+                    m.click(1002,1020)
+                    time.sleep(0.1)
         m.click(1002,1020)
         time.sleep(0.1)
     
@@ -165,7 +170,7 @@ def casting(leftIndex,target=False):
 #移动一步
 def moveOnce():
     #截屏
-    imgPath = "E:\\work\\auto-gems-of-war\\game2.jpg"
+    imgPath = "game2.jpg"
     window_capture(imgPath)
     img = cv2.imread(imgPath)
     
@@ -188,11 +193,12 @@ def moveOnce():
                 y2 = moveInfo["y2"]
                 if moveInfo["weight"] <= 10 and moveInfo["color"]!="w":
                     
-                    
-                    casting(2,True)
-                    #casting(1,True)
                     casting(1)
+                    casting(2,False)
+                    #casting(1,True)
                     casting(3)
+                    
+                    
                     
                     
                     m.click(hArr[x1],vArr[y1])
@@ -200,10 +206,19 @@ def moveOnce():
                 
                 mouse_drag(hArr[x1],vArr[y1],hArr[x2],vArr[y2])
                 print(hArr[x1],vArr[y1],hArr[x2],vArr[y2])
+                time.sleep(2)
         else:
             print("敌方全灭")
     else:
         continue_click()
+        
+    del img;
+    print ("\nbegin collect...")
+    _unreachable = gc.collect()
+    print ("unreachable object num:%d" %(_unreachable))
+    print ("garbage object num:%d" %(len(gc.garbage))   #gc.garbage是一个list对象，列表项是垃圾收集器发现的不可达（即垃圾对象）、但又不能释放(不可回收)的对象，通常gc.garbage中的对象是引用对象还中的对象。因Python不知用什么顺序来调用对象的__del__函数，导致对象始终存活在gc.garbage中，造成内存泄露 if __name__ == "__main__": test_gcleak()。如果知道一个安全次序，那么就可以打破引用焕，再执行del gc.garbage[:]从而清空垃圾对象列表
+
+    
         
         
 #识别准备===============================================================================================
@@ -268,9 +283,10 @@ def check_left(img):
         if obj["name"]:
             castImg = obj["castImg"]
             leftCastImg = cat_img(img,obj["x"],obj["y"],100,100)
-            ready = (classify_hist_with_split(castImg,leftCastImg)>0.5)
+            res = classify_hist_with_split(castImg,leftCastImg)
+            ready = (res>0.5)
             obj["ready"] = ready
-            print(obj["name"],"ready",ready)
+            print(obj["name"],"ready",ready,res)
     return True
 
     
@@ -333,11 +349,11 @@ def find_can_bomb_point(colorArr):
 def is_can_bomb(arr,x,y):
     weightMap = {
         'w':6,
-        'y':5,
-        'g':4,
-        'n':2,
-        'p':2,
-        'r':2,
+        'y':2,
+        'g':2,
+        'n':4,
+        'p':5,
+        'r':5,
         'b':3,
         0:0,
         None:0
@@ -568,7 +584,7 @@ def main():
      
     while(True):
         moveOnce()
-        time.sleep(2)
+        time.sleep(1)
     
   
 if __name__ == "__main__":
