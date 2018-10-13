@@ -4,9 +4,11 @@ import numpy as np
 import matplotlib.pyplot as plt
 import cv2
 import datetime
-import pythoncom
-import pyHook
 import gc
+import pyHook
+import pythoncom
+import multiprocessing
+
 # import the module
 from pymouse import PyMouse
 m = PyMouse()
@@ -22,7 +24,7 @@ def cat_img(img,xCenter,yCenter,imgWidth,imgHeight):
 def init_left(leftList):
     for obj in leftList:
         if obj["name"]:
-            path = "E:\\work\\auto-gems-of-war\\cast\\"+obj["name"]+".png"
+            path = "cast\\"+obj["name"]+".png"
             print(path)
             castImg = cv2.imread(path)
             print(len(castImg))
@@ -33,23 +35,29 @@ def init_left(leftList):
 hArr = [545,662,780,899,1018,1137,1253,1373]
 vArr = [140,261,378,495,618,737,851,973]
 
-prepareImgPath = "E:\\work\\auto-gems-of-war\\prepare.png"
-rImgPath = "E:\\work\\auto-gems-of-war\\base\\red.jpg"
-wImgPath = "E:\\work\\auto-gems-of-war\\base\\white.jpg"
-gImgPath = "E:\\work\\auto-gems-of-war\\base\\green.jpg"
-bImgPath = "E:\\work\\auto-gems-of-war\\base\\blue.jpg"
-pImgPath = "E:\\work\\auto-gems-of-war\\base\\purple.jpg"
-yImgPath = "E:\\work\\auto-gems-of-war\\base\\yellow.jpg"
-nImgPath = "E:\\work\\auto-gems-of-war\\base\\brown.jpg"
-dead1ImgPath = "E:\\work\\auto-gems-of-war\\base\\right_dead_1.png"
-dead2ImgPath = "E:\\work\\auto-gems-of-war\\base\\right_dead_2.png"
-dead3ImgPath = "E:\\work\\auto-gems-of-war\\base\\right_dead_3.png"
-dead4ImgPath = "E:\\work\\auto-gems-of-war\\base\\right_dead_4.png"
-fightLeftImgPath = "E:\\work\\auto-gems-of-war\\base\\fight_left.png"
-fightRightImgPath = "E:\\work\\auto-gems-of-war\\base\\fight_right.png"
-overImgPath = "E:\\work\\auto-gems-of-war\\base\\over.png"
+jjcEnterPath = "base\\jjc_enter.png"
+prepareImgPath = "base\\prepare.png"
+jjcPrepareImgPath = "base\\jjc-prepare.png"
+realJjcPrepareImgPath = "base\\real-jjc-prepare.png"
+rImgPath = "base\\red.jpg"
+wImgPath = "base\\white.jpg"
+gImgPath = "base\\green.jpg"
+bImgPath = "base\\blue.jpg"
+pImgPath = "base\\purple.jpg"
+yImgPath = "base\\yellow.jpg"
+nImgPath = "base\\brown.jpg"
+dead1ImgPath = "base\\right_dead_1.png"
+dead2ImgPath = "base\\right_dead_2.png"
+dead3ImgPath = "base\\right_dead_3.png"
+dead4ImgPath = "base\\right_dead_4.png"
+fightLeftImgPath = "base\\fight_left.png"
+fightRightImgPath = "base\\fight_right.png"
+overImgPath = "base\\over.png"
 
+
+jjcEnterImg = cv2.imread(jjcEnterPath)
 prepareImg = cv2.imread(prepareImgPath)
+jjcPrepareImg = cv2.imread(realJjcPrepareImgPath)
 rImg = cv2.imread(rImgPath)
 wImg = cv2.imread(wImgPath)
 gImg = cv2.imread(gImgPath)
@@ -66,6 +74,8 @@ fightRightImg = cv2.imread(fightRightImgPath)
 overImg = cv2.imread(overImgPath)
 
 prepareBtn = cat_img(prepareImg,952,1010,200,50)
+jjcPrepareBtn = cat_img(jjcPrepareImg,959,1009,708,101)
+jjcHuozhadanImg = cat_img(jjcPrepareImg,449,600,100,100)
 rImg = cat_img(rImg,60,60,76,76)
 wImg = cat_img(wImg,60,60,76,76)
 gImg = cat_img(gImg,60,60,76,76)
@@ -77,36 +87,33 @@ dead1Img = cat_img(dead1Img,50,50,100,100)
 dead2Img = cat_img(dead2Img,50,50,100,100)
 dead3Img = cat_img(dead3Img,50,50,100,100)
 dead4Img = cat_img(dead4Img,50,50,100,100)
+    
 
 #我方数组
 leftList = [{
     "x":319,
     "y":189,
-    "name":False,
+    "name":"shanmaifensuizhe",
     "target":False,
-    "castImg":None,
-    "order":1
+    "castImg":None
 },{
     "x":319,
     "y":442,
-    "name":"taiyangniao",
+    "name":"xingtian",
     "target":False,
-    "castImg":None,
-    "order":2
+    "castImg":None
 },{
     "x":319,
     "y":699,
-    "name":"huozhadan",
-    "target":True,
-    "castImg":None,
-    "order":3
+    "name":"duyaodashi",
+    "target":False,
+    "castImg":None
 },{
     "x":319,
     "y":952,
-    "name":"huozhadan",
+    "name":"",
     "target":False,
-    "castImg":None,
-    "order":4
+    "castImg":None
 }]
 #敌方数组
 rightList = [{
@@ -132,23 +139,24 @@ rightList = [{
 }]
 init_left(leftList)
 
-  
+resetX = 1208
 def continue_click():
     #点击继续
-    m.click(1002,1020)
+    m.click(resetX,1020)
     time.sleep(0.25)
-    m.click(1002,1020)
+    m.click(resetX,1020)
     time.sleep(0.25)
     #点击选择升级
-    m.click(1002,950)
+    m.click(resetX,950)
     time.sleep(0.25)
-    m.click(1002,950)
+    m.click(resetX,950)
     time.sleep(0.25)
 
 
 def casting(leftIndex,target=False):
     obj = leftList[leftIndex]
-    if(obj["ready"]):
+    #if(obj["ready"]):
+    if(True):
     
         m.click(obj["x"],obj["y"])#选中军队
         time.sleep(0.1)
@@ -161,9 +169,9 @@ def casting(leftIndex,target=False):
                 if obj["live"]:
                     m.click(obj["x"],obj["y"])
                     time.sleep(0.1)
-                    m.click(1002,1020)
+                    m.click(resetX,1020)
                     time.sleep(0.1)
-        m.click(1002,1020)
+        m.click(resetX,1020)
         time.sleep(0.1)
     
     
@@ -173,8 +181,12 @@ def moveOnce():
     imgPath = "game2.jpg"
     window_capture(imgPath)
     img = cv2.imread(imgPath)
-    
-    if check_prepare(img):
+    if(check_main_view(img)):
+        return True
+    if check_jjc_prepare(img):
+        #竞技场准备中，刷火炸弹
+        return True
+    elif check_prepare(img):
         #准备中
         return True
     elif check_fight(img):
@@ -184,6 +196,8 @@ def moveOnce():
             #敌方未全灭
             check_left(img)
             colorArr = check64(img)
+            if not colorArr:
+                return False
             moveInfo = find_can_bomb_point(colorArr)
             if moveInfo:
                 print("moveInfo",moveInfo)
@@ -191,18 +205,18 @@ def moveOnce():
                 y1 = moveInfo["y1"]
                 x2 = moveInfo["x2"]
                 y2 = moveInfo["y2"]
-                if moveInfo["weight"] <= 10 and moveInfo["color"]!="w":
+                if moveInfo["weight"] <= 10:
                     
-                    casting(1)
+                    casting(1,False)
                     casting(2,False)
-                    #casting(1,True)
-                    casting(3)
+                    casting(0,False)
+                    #casting(2,False)
                     
                     
-                    
-                    
-                    m.click(hArr[x1],vArr[y1])
+                    m.click(2,2)
                     time.sleep(0.1)
+                    m.click(hArr[x1],vArr[y1])
+                    time.sleep(0.2)
                 
                 mouse_drag(hArr[x1],vArr[y1],hArr[x2],vArr[y2])
                 print(hArr[x1],vArr[y1],hArr[x2],vArr[y2])
@@ -211,17 +225,52 @@ def moveOnce():
             print("敌方全灭")
     else:
         continue_click()
-        
-    del img;
-    print ("\nbegin collect...")
-    _unreachable = gc.collect()
-    print ("unreachable object num:%d" %(_unreachable))
-    print ("garbage object num:%d" %(len(gc.garbage))   #gc.garbage是一个list对象，列表项是垃圾收集器发现的不可达（即垃圾对象）、但又不能释放(不可回收)的对象，通常gc.garbage中的对象是引用对象还中的对象。因Python不知用什么顺序来调用对象的__del__函数，导致对象始终存活在gc.garbage中，造成内存泄露 if __name__ == "__main__": test_gcleak()。如果知道一个安全次序，那么就可以打破引用焕，再执行del gc.garbage[:]从而清空垃圾对象列表
 
-    
+    del img
+    #print ("\nbegin collect...")
+    _unreachable = gc.collect()
+    #print ("unreachable object num:%d" %(_unreachable))
+    #print ("garbage object num:%d" %(len(gc.garbage))   #gc.garbage是一个list对象，列表项是垃圾收集器发现的不可达（即垃圾对象）、但又不能释放(不可回收)的对象，通常gc.garbage中的对象是引用对象还中的对象。因Python不知用什么顺序来调用对象的__del__函数，导致对象始终存活在gc.garbage中，造成内存泄露 if __name__ == "__main__": test_gcleak()。如果知道一个安全次序，那么就可以打破引用焕，再执行del gc.garbage[:]从而清空垃圾对象列表
+        
         
         
 #识别准备===============================================================================================
+def check_main_view(img):
+    
+    btn = cat_img(img,360,978,80,80)
+    matchJjc = (classify_hist_with_split(btn,jjcEnterImg))
+    print("比较竞技场入口",matchJjc)
+    print(len(jjcEnterImg))
+    if matchJjc>0.5:
+        #点击竞技场入口
+        m.click(360,978)
+        return True
+
+def check_jjc_prepare(img):
+    btn = cat_img(img,959,1009,708,101)
+    if(classify_hist_with_split(btn,jjcPrepareBtn)>0.5):
+        #竞技场准备
+        jjcArr = [[1469,600],[959,600],[449,600]]
+        #jjcArr = [[449,600]]
+        for arr in jjcArr:
+            target = cat_img(img,arr[0],arr[1],100,100)
+            if(classify_hist_with_split(target,jjcHuozhadanImg)>0.5):
+                print("遇到火炸弹，点炸弹")
+                #遇到火炸弹，点炸弹
+                m.click(arr[0],600);
+                time.sleep(0.2)
+                return True
+        #未遇到火炸弹，点最左
+        print("未遇到火炸弹，点中")
+        m.click(jjcArr[1][0],900)
+        time.sleep(0.25)
+        return True
+    else:
+        return False
+    jjcHuozhadanImg
+    jjcPrepareBtn
+    
+    
 def check_prepare(img):
     curPrepareBtn =  cat_img(img,952,1010,200,50)
     if (classify_hist_with_split(curPrepareBtn,prepareBtn)>0.5):
@@ -230,7 +279,7 @@ def check_prepare(img):
         reset_right_list()
         print("检查到准备中")
         #点击继续
-        m.click(1002,1020)
+        m.click(resetX,1020)
         time.sleep(0.25)
         return True
     else:
@@ -242,7 +291,8 @@ def check_prepare(img):
 def reset_right_list():
     for obj in rightList:
         obj["live"] = True
-    
+
+#战斗=================================================================================
 #识别战斗中界面
 def check_fight(img):
     leftImg = cat_img(img,55,55,64,64)
@@ -283,16 +333,17 @@ def check_left(img):
         if obj["name"]:
             castImg = obj["castImg"]
             leftCastImg = cat_img(img,obj["x"],obj["y"],100,100)
-            res = classify_hist_with_split(castImg,leftCastImg)
-            ready = (res>0.5)
+            ready = (classify_hist_with_split(castImg,leftCastImg)>0.5)
             obj["ready"] = ready
-            print(obj["name"],"ready",ready,res)
+            print(obj["name"],"ready",ready)
     return True
 
     
 #64个图标识别===============================================================================================
 #识别 64个 图标存进 colorArr
+uncheckedNum = 0
 def check64(img):
+    global uncheckedNum
     colorArr = [([0] * 8) for i in range(8)]
     start = time.time()
     imgSize = 76
@@ -300,7 +351,12 @@ def check64(img):
         for yIndex,yCenter in enumerate(vArr):
             imgPart = cat_img(img,xCenter,yCenter,imgSize,imgSize)
     #         imgArr[yIndex][xIndex] = imgPart
-            colorArr[yIndex][xIndex] = compare_color(imgPart)
+            color = compare_color(imgPart)
+            colorArr[yIndex][xIndex] = color
+            if (not color) and (uncheckedNum<5):
+                uncheckedNum  += 1
+                print(yIndex,xIndex ,"未识别")
+                return False
     #         cv2.imwrite(str(yIndex)+str(xIndex)+".bmp",imgPart)
     #         plt.imshow(imgPart)
     #         plt.show()
@@ -315,19 +371,20 @@ def check64(img):
 
 #识别7种颜色
 def compare_color(imgPart):
-    if (classify_hist_with_split(imgPart,bImg)[0]>0.5):
+    compValue = 0.5
+    if (classify_hist_with_split(imgPart,bImg)[0]>compValue):
         return "b"
-    if (classify_hist_with_split(imgPart,wImg)>0.5):
+    if (classify_hist_with_split(imgPart,wImg)>compValue):
         return "w"
-    if (classify_hist_with_split(imgPart,yImg)>0.5):
+    if (classify_hist_with_split(imgPart,yImg)>compValue):
         return "y"
-    if (classify_hist_with_split(imgPart,rImg)>0.5):
+    if (classify_hist_with_split(imgPart,rImg)>compValue):
         return "r"
-    if (classify_hist_with_split(imgPart,pImg)>0.5):
+    if (classify_hist_with_split(imgPart,pImg)>compValue):
         return "p"
-    if (classify_hist_with_split(imgPart,nImg)>0.5):
+    if (classify_hist_with_split(imgPart,nImg)>compValue):
         return "n"
-    if (classify_hist_with_split(imgPart,gImg)>0.5):
+    if (classify_hist_with_split(imgPart,gImg)>compValue):
         return "g"
     
 
@@ -348,13 +405,13 @@ def find_can_bomb_point(colorArr):
 
 def is_can_bomb(arr,x,y):
     weightMap = {
-        'w':6,
+        'w':5,
         'y':2,
-        'g':2,
-        'n':4,
-        'p':5,
-        'r':5,
-        'b':3,
+        'g':5,
+        'n':5,
+        'p':4,
+        'r':6,
+        'b':2,
         0:0,
         None:0
     }
@@ -473,6 +530,21 @@ def window_capture(filename):
     # 截取从左上角（0，0）长宽为（w，h）的图片
     saveDC.BitBlt((0, 0), (w, h), mfcDC, (0, 0), win32con.SRCCOPY)
     saveBitMap.SaveBitmapFile(saveDC, filename)
+    # 内存释放
+    win32gui.DeleteObject(saveBitMap.GetHandle())
+    saveDC.DeleteDC()
+    mfcDC.DeleteDC()
+	#ReleaseDC函数
+    #函数功能：函数释放设备上下文环境（DC）供其他应用程序使用。函数的效果与设备上下文环境类型有关。它只释放公用的和设备上下文环境，对于类或私有的则无数。
+    #函数原型：int ReleaseDC(HWND hWnd, HDC hdc)；
+    #参数：
+    #hWnd：指向要释放的设备上下文环境所在的窗口的句柄。
+    #hDC：指向要释放的设备上下文环境的句柄。
+    #返回值：返回值说明了设备上下文环境是否释放；如果释放成功，则返回值为1；如果没有释放成功，则返回值为0。
+    #注释：每次调用GetWindowDC和GetDC函数检索公用设备上下文环境之后，应用程序必须调用ReleaseDC函数来释放设备上下文环境。
+    #应用程序不能调用ReleaseDC函数来释放由CreateDC函数创建的设备上下文环境，只能使用DeleteDC函数。
+    win32gui.ReleaseDC(hwnd,hwndDC)
+    
 
     
 
@@ -578,13 +650,76 @@ def Hamming_distance(hash1,hash2):
     return num  
     
     
-    
-    
-def main():
-     
-    while(True):
-        moveOnce()
+
+
+def worker(isLoop):
+    while True:
+        print("循环中",isLoop)
+        if isLoop:
+            print("loop循环中",isLoop)
+            moveOnce()
         time.sleep(1)
+        
+        
+mainProgress = None
+def onKeyboardEvent(event):
+    global isLoop
+    global mainProgress
+    # 监听键盘事件
+    #最近使用PyUserInput的KeyboardEvent的时候遇到了KeyboardSwitch() missing 8的情况;
+    #该问题具体表现在当你focus的那个进程的窗口title带中文, 就会出现上面那个错误, 如果都是英文或者其他ascii字符则不会;
+
+    print ("MessageName:", event.MessageName)
+    print ("Message:", event.Message)
+    print ("Time:", event.Time)
+    print ("Window:", event.Window)
+    print ("WindowName:", event.WindowName)
+    print ("Ascii:", event.Ascii, chr(event.Ascii))
+    print ("Key:", event.Key)
+    print ("KeyID:", event.KeyID)
+    print ("ScanCode:", event.ScanCode)
+    print ("Extended:", event.Extended)
+    print ("Injected:", event.Injected)
+    print ("Alt", event.Alt)
+    print ("Transition", event.Transition)
+    print ("---")
+    
+    if event.Key=="D":
+        isLoop = True
+        mainProgress = multiprocessing.Process(target = worker, args = (isLoop,))
+        mainProgress.start()
+        print("设置isLoop",isLoop)
+    elif  event.Key=="F":
+        print("mainProgress进程",mainProgress)
+        if mainProgress:
+            isLoop = False
+            mainProgress.terminate()
+            print("设置isLoop",isLoop)
+        
+    
+    # 同鼠标事件监听函数的返回值df
+    return True
+
+
+
+def main():
+
+    
+    
+    # 创建一个“钩子”管理对象
+    hm = pyHook.HookManager()
+    # 监听所有键盘事件
+    hm.KeyDown = onKeyboardEvent
+    # 设置键盘“钩子”
+    hm.HookKeyboard()
+    
+        
+    # 进入循环，如不手动关闭，程序将一直处于监听状态dd
+    pythoncom.PumpMessages()
+    
+    
+
+        
     
   
 if __name__ == "__main__":
