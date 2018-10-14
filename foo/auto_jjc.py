@@ -74,7 +74,7 @@ fightRightImg = cv2.imread(fightRightImgPath)
 overImg = cv2.imread(overImgPath)
 
 prepareBtn = cat_img(prepareImg,952,1010,200,50)
-jjcPrepareBtn = cat_img(jjcPrepareImg,959,1009,708,101)
+jjcPrepareBtn = cat_img(jjcPrepareImg,959,1009,241,53)
 jjcHuozhadanImg = cat_img(jjcPrepareImg,449,600,100,100)
 rImg = cat_img(rImg,60,60,76,76)
 wImg = cat_img(wImg,60,60,76,76)
@@ -208,8 +208,8 @@ def moveOnce():
                 if moveInfo["weight"] <= 10:
                     
                     casting(1,False)
-                    casting(2,False)
                     casting(0,False)
+                    casting(2,False)
                     #casting(2,False)
                     
                     
@@ -247,7 +247,7 @@ def check_main_view(img):
         return True
 
 def check_jjc_prepare(img):
-    btn = cat_img(img,959,1009,708,101)
+    btn = cat_img(img,959,1009,241,53)
     if(classify_hist_with_split(btn,jjcPrepareBtn)>0.5):
         #竞技场准备
         jjcArr = [[1469,600],[959,600],[449,600]]
