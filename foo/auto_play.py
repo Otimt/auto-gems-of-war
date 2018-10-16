@@ -4,9 +4,11 @@ import numpy as np
 import matplotlib.pyplot as plt
 import cv2
 import datetime
-import pythoncom
-import pyHook
 import gc
+import pyHook
+import pythoncom
+import multiprocessing
+
 # import the module
 from pymouse import PyMouse
 m = PyMouse()
@@ -82,28 +84,28 @@ dead4Img = cat_img(dead4Img,50,50,100,100)
 leftList = [{
     "x":319,
     "y":189,
-    "name":False,
+    "name":"huozhadan",
     "target":False,
     "castImg":None,
     "order":1
 },{
     "x":319,
     "y":442,
-    "name":"taiyangniao",
+    "name":"huozhadan",
     "target":False,
     "castImg":None,
     "order":2
 },{
     "x":319,
     "y":699,
-    "name":"huozhadan",
+    "name":"taiyangniao",
     "target":True,
     "castImg":None,
     "order":3
 },{
     "x":319,
     "y":952,
-    "name":"huozhadan",
+    "name":False,
     "target":False,
     "castImg":None,
     "order":4
@@ -144,14 +146,19 @@ def continue_click():
     time.sleep(0.25)
     m.click(1002,950)
     time.sleep(0.25)
+    #跳过每日活动
+    m.click(1902,950)
+    time.sleep(0.25)
+    m.click(1902,950)
+    time.sleep(0.25)
 
 
 def casting(leftIndex,target=False):
     obj = leftList[leftIndex]
-    if(obj["ready"]):
-    
+    #if(obj["ready"]):
+    if(True):
         m.click(obj["x"],obj["y"])#选中军队
-        time.sleep(0.1)
+        time.sleep(0.18)
         m.click(950,950)#点击施法
         time.sleep(0.1)
         
@@ -195,10 +202,11 @@ def moveOnce():
                 y2 = moveInfo["y2"]
                 if moveInfo["weight"] <= 10 and moveInfo["color"]!="w":
                     
-                    casting(1)
-                    casting(2,False)
+                    casting(2)
+                    casting(0)
+                    casting(1,False)
                     #casting(1,True)
-                    casting(3)
+                    
                     
                     
                     
@@ -355,10 +363,10 @@ def find_can_bomb_point(colorArr):
 def is_can_bomb(arr,x,y):
     weightMap = {
         'w':6,
-        'y':2,
-        'g':2,
+        'y':3,
+        'g':4,
         'n':4,
-        'p':5,
+        'p':3,
         'r':5,
         'b':3,
         0:0,
@@ -479,7 +487,11 @@ def window_capture(filename):
     # 截取从左上角（0，0）长宽为（w，h）的图片
     saveDC.BitBlt((0, 0), (w, h), mfcDC, (0, 0), win32con.SRCCOPY)
     saveBitMap.SaveBitmapFile(saveDC, filename)
-    #ReleaseDC函数
+    # 内存释放
+    win32gui.DeleteObject(saveBitMap.GetHandle())
+    saveDC.DeleteDC()
+    mfcDC.DeleteDC()
+	#ReleaseDC函数
     #函数功能：函数释放设备上下文环境（DC）供其他应用程序使用。函数的效果与设备上下文环境类型有关。它只释放公用的和设备上下文环境，对于类或私有的则无数。
     #函数原型：int ReleaseDC(HWND hWnd, HDC hdc)；
     #参数：
@@ -594,11 +606,74 @@ def Hamming_distance(hash1,hash2):
     return num  
     
 
-def main():
-     
-    while(True):
-        moveOnce()
+def worker(isLoop):
+    while True:
+        print("循环中",isLoop)
+        if isLoop:
+            print("loop循环中",isLoop)
+            moveOnce()
         time.sleep(1)
+        
+        
+mainProgress = None
+def onKeyboardEvent(event):
+    global isLoop
+    global mainProgress
+    # 监听键盘事件
+    #最近使用PyUserInput的KeyboardEvent的时候遇到了KeyboardSwitch() missing 8的情况;
+    #该问题具体表现在当你focus的那个进程的窗口title带中文, 就会出现上面那个错误, 如果都是英文或者其他ascii字符则不会;
+
+    print ("MessageName:", event.MessageName)
+    print ("Message:", event.Message)
+    print ("Time:", event.Time)
+    print ("Window:", event.Window)
+    print ("WindowName:", event.WindowName)
+    print ("Ascii:", event.Ascii, chr(event.Ascii))
+    print ("Key:", event.Key)
+    print ("KeyID:", event.KeyID)
+    print ("ScanCode:", event.ScanCode)
+    print ("Extended:", event.Extended)
+    print ("Injected:", event.Injected)
+    print ("Alt", event.Alt)
+    print ("Transition", event.Transition)
+    print ("---")
+    
+    if event.Key=="S":
+        isLoop = True
+        mainProgress = multiprocessing.Process(target = worker, args = (isLoop,))
+        mainProgress.start()
+        print("设置isLoop",isLoop)
+    elif  event.Key=="F":
+        print("mainProgress进程",mainProgress)
+        if mainProgress:
+            isLoop = False
+            mainProgress.terminate()
+            print("设置isLoop",isLoop)
+        
+    
+    # 同鼠标事件监听函数的返回值df
+    return True
+
+
+
+def main():
+
+    
+    
+    # 创建一个“钩子”管理对象
+    hm = pyHook.HookManager()
+    # 监听所有键盘事件
+    hm.KeyDown = onKeyboardEvent
+    # 设置键盘“钩子”
+    hm.HookKeyboard()
+    
+        
+    # 进入循环，如不手动关闭，程序将一直处于监听状态dd
+    pythoncom.PumpMessages()
+    
+    
+    
+    
     
   
 if __name__ == "__main__":

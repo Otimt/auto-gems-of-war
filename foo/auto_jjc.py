@@ -151,9 +151,14 @@ def continue_click():
     time.sleep(0.25)
     m.click(resetX,950)
     time.sleep(0.25)
+    #跳过每日活动
+    m.click(1902,950)
+    time.sleep(0.25)
+    m.click(1902,950)
+    time.sleep(0.25)
 
 
-def casting(leftIndex,target=False):
+def casting(leftIndex,target=True):
     obj = leftList[leftIndex]
     #if(obj["ready"]):
     if(True):
@@ -207,9 +212,9 @@ def moveOnce():
                 y2 = moveInfo["y2"]
                 if moveInfo["weight"] <= 10:
                     
-                    casting(1,False)
-                    casting(0,False)
-                    casting(2,False)
+                    casting(1)
+                    casting(0)
+                    casting(2)
                     #casting(2,False)
                     
                     
@@ -371,7 +376,7 @@ def check64(img):
 
 #识别7种颜色
 def compare_color(imgPart):
-    compValue = 0.5
+    compValue = 0.49
     if (classify_hist_with_split(imgPart,bImg)[0]>compValue):
         return "b"
     if (classify_hist_with_split(imgPart,wImg)>compValue):
@@ -684,7 +689,7 @@ def onKeyboardEvent(event):
     print ("Transition", event.Transition)
     print ("---")
     
-    if event.Key=="D":
+    if event.Key=="S":
         isLoop = True
         mainProgress = multiprocessing.Process(target = worker, args = (isLoop,))
         mainProgress.start()
