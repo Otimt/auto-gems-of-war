@@ -114,11 +114,11 @@ leftList = [{
 weightMap = {
     'w':6,
     'y':3,
-    'g':4,
-    'n':4,
-    'p':3,
+    'g':2,
+    'n':3,
+    'p':5,
     'r':5,
-    'b':3,
+    'b':4,
     0:0,
     None:0
 }
@@ -216,8 +216,8 @@ def moveOnce():
                 if moveInfo["weight"] <= 10 and moveInfo["color"]!="w":
                     
                     casting(2)
-                    casting(0)
                     casting(1)
+                    casting(0)
                     #casting(1)
                     
                     
@@ -316,7 +316,9 @@ def check_left(img):
     
 #64个图标识别===============================================================================================
 #识别 64个 图标存进 colorArr
+uncheckedNum = 0
 def check64(img):
+    global uncheckedNum
     colorArr = [([0] * 8) for i in range(8)]
     start = time.time()
     imgSize = 76
@@ -326,7 +328,9 @@ def check64(img):
     #         imgArr[yIndex][xIndex] = imgPart
             color = compare_color(imgPart)
             colorArr[yIndex][xIndex] = color
-            if not color:
+            if (not color) and (uncheckedNum<5):
+                uncheckedNum  += 1
+                print(yIndex,xIndex ,"未识别")
                 return False
     #         cv2.imwrite(str(yIndex)+str(xIndex)+".bmp",imgPart)
     #         plt.imshow(imgPart)
