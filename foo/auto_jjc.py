@@ -115,6 +115,17 @@ leftList = [{
     "target":False,
     "castImg":None
 }]
+weightMap = {
+    'w':5,
+    'y':2,
+    'g':5,
+    'n':5,
+    'p':4,
+    'r':6,
+    'b':2,
+    0:0,
+    None:0
+}
 #敌方数组
 rightList = [{
     "x":1602,
@@ -158,7 +169,7 @@ def continue_click():
     time.sleep(0.25)
 
 
-def casting(leftIndex,target=True):
+def casting(leftIndex):
     obj = leftList[leftIndex]
     #if(obj["ready"]):
     if(True):
@@ -167,7 +178,7 @@ def casting(leftIndex,target=True):
         time.sleep(0.1)
         m.click(950,950)#点击施法
         time.sleep(0.1)
-        
+        target=obj["target"]
         if target:
             for index,obj in enumerate(rightList):
                 print("点击敌人",index,obj["live"])
@@ -215,7 +226,7 @@ def moveOnce():
                     casting(1)
                     casting(0)
                     casting(2)
-                    #casting(2,False)
+                    #casting(2)
                     
                     
                     m.click(2,2)
@@ -409,17 +420,7 @@ def find_can_bomb_point(colorArr):
     return maxBomb
 
 def is_can_bomb(arr,x,y):
-    weightMap = {
-        'w':5,
-        'y':2,
-        'g':5,
-        'n':5,
-        'p':4,
-        'r':6,
-        'b':2,
-        0:0,
-        None:0
-    }
+    
     
     lWeight = 0
     tWeight = 0

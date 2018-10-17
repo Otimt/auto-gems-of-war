@@ -85,14 +85,14 @@ leftList = [{
     "x":319,
     "y":189,
     "name":"huozhadan",
-    "target":False,
+    "target":True,
     "castImg":None,
     "order":1
 },{
     "x":319,
     "y":442,
     "name":"huozhadan",
-    "target":False,
+    "target":True,
     "castImg":None,
     "order":2
 },{
@@ -106,10 +106,22 @@ leftList = [{
     "x":319,
     "y":952,
     "name":False,
-    "target":False,
+    "target":True,
     "castImg":None,
     "order":4
 }]
+#权重数组
+weightMap = {
+    'w':6,
+    'y':3,
+    'g':4,
+    'n':4,
+    'p':3,
+    'r':5,
+    'b':3,
+    0:0,
+    None:0
+}
 #敌方数组
 rightList = [{
     "x":1602,
@@ -134,7 +146,7 @@ rightList = [{
 }]
 init_left(leftList)
 
-  
+resetX = 1208
 def continue_click():
     #点击继续
     m.click(1002,1020)
@@ -153,24 +165,25 @@ def continue_click():
     time.sleep(0.25)
 
 
-def casting(leftIndex,target=False):
+def casting(leftIndex):
     obj = leftList[leftIndex]
     #if(obj["ready"]):
     if(True):
+    
         m.click(obj["x"],obj["y"])#选中军队
-        time.sleep(0.18)
+        time.sleep(0.1)
         m.click(950,950)#点击施法
         time.sleep(0.1)
-        
+        target=obj["target"]
         if target:
             for index,obj in enumerate(rightList):
                 print("点击敌人",index,obj["live"])
                 if obj["live"]:
                     m.click(obj["x"],obj["y"])
                     time.sleep(0.1)
-                    m.click(1002,1020)
+                    m.click(resetX,1020)
                     time.sleep(0.1)
-        m.click(1002,1020)
+        m.click(resetX,1020)
         time.sleep(0.1)
     
     
@@ -204,8 +217,8 @@ def moveOnce():
                     
                     casting(2)
                     casting(0)
-                    casting(1,False)
-                    #casting(1,True)
+                    casting(1)
+                    #casting(1)
                     
                     
                     
@@ -361,17 +374,7 @@ def find_can_bomb_point(colorArr):
     return maxBomb
 
 def is_can_bomb(arr,x,y):
-    weightMap = {
-        'w':6,
-        'y':3,
-        'g':4,
-        'n':4,
-        'p':3,
-        'r':5,
-        'b':3,
-        0:0,
-        None:0
-    }
+    
     
     lWeight = 0
     tWeight = 0
