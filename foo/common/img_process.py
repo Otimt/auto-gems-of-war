@@ -1,4 +1,15 @@
+#图像处理相关方法
+
 import cv2
+
+
+#截取图片中心
+def cat_img(img,xCenter,yCenter,imgWidth,imgHeight):
+    x = int(xCenter - imgWidth/2)
+    y = int(yCenter - imgHeight/2)
+    imgPart = img[y:(y+imgHeight),x:(x+imgWidth)]
+    return imgPart
+    
 
 #图片比较基础========================================================================================================
 # 最简单的以灰度直方图作为相似比较的实现  

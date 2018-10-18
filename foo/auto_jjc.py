@@ -9,88 +9,22 @@ import pyHook
 import pythoncom
 import multiprocessing
 
-from common.check_bomb import find_can_bomb_point
-from common.comp_img import classify_hist_with_split
+from common.check_bomb import find_can_bomb_point,check64
+from common.img_process import classify_hist_with_split,cat_img
+from common.game_action import *
 
 # import the module
 from pymouse import PyMouse
 m = PyMouse()
 
-#截取图片中心
-def cat_img(img,xCenter,yCenter,imgWidth,imgHeight):
-    x = int(xCenter - imgWidth/2)
-    y = int(yCenter - imgHeight/2)
-    imgPart = img[y:(y+imgHeight),x:(x+imgWidth)]
-    return imgPart
 
-#初始化我方技能检查图片
-def init_left(leftList):
-    for obj in leftList:
-        if obj["name"]:
-            path = "cast\\"+obj["name"]+".png"
-            print(path)
-            castImg = cv2.imread(path)
-            print(len(castImg))
-            obj["castImg"] = castImg
-    return True
+
+
 
     
 hArr = [545,662,780,899,1018,1137,1253,1373]
 vArr = [140,261,378,495,618,737,851,973]
 
-jjcEnterPath = "base\\jjc_enter.png"
-prepareImgPath = "base\\prepare.png"
-jjcPrepareImgPath = "base\\jjc-prepare.png"
-realJjcPrepareImgPath = "base\\real-jjc-prepare.png"
-rImgPath = "base\\red.jpg"
-wImgPath = "base\\white.jpg"
-gImgPath = "base\\green.jpg"
-bImgPath = "base\\blue.jpg"
-pImgPath = "base\\purple.jpg"
-yImgPath = "base\\yellow.jpg"
-nImgPath = "base\\brown.jpg"
-dead1ImgPath = "base\\right_dead_1.png"
-dead2ImgPath = "base\\right_dead_2.png"
-dead3ImgPath = "base\\right_dead_3.png"
-dead4ImgPath = "base\\right_dead_4.png"
-fightLeftImgPath = "base\\fight_left.png"
-fightRightImgPath = "base\\fight_right.png"
-overImgPath = "base\\over.png"
-
-
-jjcEnterImg = cv2.imread(jjcEnterPath)
-prepareImg = cv2.imread(prepareImgPath)
-jjcPrepareImg = cv2.imread(realJjcPrepareImgPath)
-rImg = cv2.imread(rImgPath)
-wImg = cv2.imread(wImgPath)
-gImg = cv2.imread(gImgPath)
-bImg = cv2.imread(bImgPath)
-pImg = cv2.imread(pImgPath)
-yImg = cv2.imread(yImgPath)
-nImg = cv2.imread(nImgPath)
-dead1Img  = cv2.imread(dead1ImgPath)
-dead2Img  = cv2.imread(dead2ImgPath)
-dead3Img  = cv2.imread(dead3ImgPath)
-dead4Img  = cv2.imread(dead4ImgPath)
-fightLeftImg = cv2.imread(fightLeftImgPath)
-fightRightImg = cv2.imread(fightRightImgPath)
-overImg = cv2.imread(overImgPath)
-
-prepareBtn = cat_img(prepareImg,952,1010,200,50)
-jjcPrepareBtn = cat_img(jjcPrepareImg,959,1009,241,53)
-jjcHuozhadanImg = cat_img(jjcPrepareImg,449,600,100,100)
-rImg = cat_img(rImg,60,60,76,76)
-wImg = cat_img(wImg,60,60,76,76)
-gImg = cat_img(gImg,60,60,76,76)
-bImg = cat_img(bImg,60,60,76,76)
-pImg = cat_img(pImg,60,60,76,76)
-yImg = cat_img(yImg,60,60,76,76)
-nImg = cat_img(nImg,60,60,76,76)
-dead1Img = cat_img(dead1Img,50,50,100,100)
-dead2Img = cat_img(dead2Img,50,50,100,100)
-dead3Img = cat_img(dead3Img,50,50,100,100)
-dead4Img = cat_img(dead4Img,50,50,100,100)
-    
 
 #我方数组
 leftList = [{
@@ -129,69 +63,10 @@ weightMap = {
     0:0,
     None:0
 }
-#敌方数组
-rightList = [{
-    "x":1602,
-    "y":189,
-    "live":True,
-    "deadImg":dead1Img
-},{
-    "x":1602,
-    "y":442,
-    "live":True,
-    "deadImg":dead2Img
-},{
-    "x":1602,
-    "y":699,
-    "live":True,
-    "deadImg":dead3Img
-},{
-    "x":1602,
-    "y":952,
-    "live":True,
-    "deadImg":dead4Img
-}]
+
 init_left(leftList)
 
-resetX = 1208
-def continue_click():
-    #点击继续
-    m.click(resetX,1020)
-    time.sleep(0.25)
-    m.click(resetX,1020)
-    time.sleep(0.25)
-    #点击选择升级
-    m.click(resetX,950)
-    time.sleep(0.25)
-    m.click(resetX,950)
-    time.sleep(0.25)
-    #跳过每日活动
-    m.click(1902,950)
-    time.sleep(0.25)
-    m.click(1902,950)
-    time.sleep(0.25)
 
-
-def casting(leftIndex):
-    obj = leftList[leftIndex]
-    #if(obj["ready"]):
-    if(True):
-    
-        m.click(obj["x"],obj["y"])#选中军队
-        time.sleep(0.1)
-        m.click(950,950)#点击施法
-        time.sleep(0.1)
-        target=obj["target"]
-        if target:
-            for index,obj in enumerate(rightList):
-                print("点击敌人",index,obj["live"])
-                if obj["live"]:
-                    m.click(obj["x"],obj["y"])
-                    time.sleep(0.1)
-                    m.click(resetX,1020)
-                    time.sleep(0.1)
-        m.click(resetX,1020)
-        time.sleep(0.1)
     
     
 #移动一步
@@ -214,7 +89,7 @@ def moveOnce():
         if not is_all_right_dead(img):
             #敌方未全灭
             check_left(img)
-            colorArr = check64(img)
+            colorArr = check64(img,hArr,vArr)
             if not colorArr:
                 return False
             moveInfo = find_can_bomb_point(colorArr,weightMap)
@@ -253,158 +128,10 @@ def moveOnce():
         
         
         
-#识别准备===============================================================================================
-def check_main_view(img):
-    
-    btn = cat_img(img,360,978,80,80)
-    matchJjc = (classify_hist_with_split(btn,jjcEnterImg))
-    print("比较竞技场入口",matchJjc)
-    print(len(jjcEnterImg))
-    if matchJjc>0.5:
-        #点击竞技场入口
-        m.click(360,978)
-        return True
 
-def check_jjc_prepare(img):
-    btn = cat_img(img,959,1009,241,53)
-    if(classify_hist_with_split(btn,jjcPrepareBtn)>0.5):
-        #竞技场准备
-        jjcArr = [[1469,600],[959,600],[449,600]]
-        #jjcArr = [[449,600]]
-        for arr in jjcArr:
-            target = cat_img(img,arr[0],arr[1],100,100)
-            if(classify_hist_with_split(target,jjcHuozhadanImg)>0.5):
-                print("遇到火炸弹，点炸弹")
-                #遇到火炸弹，点炸弹
-                m.click(arr[0],600);
-                time.sleep(0.2)
-                return True
-        #未遇到火炸弹，点最左
-        print("未遇到火炸弹，点中")
-        m.click(jjcArr[1][0],900)
-        time.sleep(0.25)
-        return True
-    else:
-        return False
-    jjcHuozhadanImg
-    jjcPrepareBtn
-    
-    
-def check_prepare(img):
-    curPrepareBtn =  cat_img(img,952,1010,200,50)
-    if (classify_hist_with_split(curPrepareBtn,prepareBtn)>0.5):
-        #准备中
-        #重置敌方数组
-        reset_right_list()
-        print("检查到准备中")
-        #点击继续
-        m.click(resetX,1020)
-        time.sleep(0.25)
-        return True
-    else:
-        print("未检查到准备中")
-        return False
-        
 
-#重置敌方数组
-def reset_right_list():
-    for obj in rightList:
-        obj["live"] = True
 
-#战斗=================================================================================
-#识别战斗中界面
-def check_fight(img):
-    leftImg = cat_img(img,55,55,64,64)
-    rightImg = cat_img(img,1865,55,64,64)
-    left = classify_hist_with_split(fightLeftImg,leftImg)
-    right = classify_hist_with_split(fightRightImg,rightImg)
-    print("识别战斗中界面 left",left,"right",right)
-    if (left>0.5) or (right>0.5):
-        print("战斗中中")
-        return True
-    else :
-        print("未战斗中中")
-        return False
 
-#识别敌方数组
-def check_right(img):
-    #for index,obj in enumerate(rightList):
-    #    
-    #    rightImg = cat_img(img,obj["x"],obj["y"],100,100)
-    #    deadImg = obj["deadImg"]
-    #    live = classify_hist_with_split(rightImg,deadImg)
-    #    if (live>0.5):
-    #        obj["live"] = False
-    #    else:
-    #        obj["live"] = True
-    #    print("敌人",index,"活着：",obj["live"],live)
-    return True
-    
-#敌方全灭否
-def is_all_right_dead(img):
-    centerImg = cat_img(img,960,540,80,80)
-    return (classify_hist_with_split(centerImg,overImg)>0.5)
-
-    
-#识别我方数组是否准备好
-def check_left(img):
-    for obj in leftList:
-        if obj["name"]:
-            castImg = obj["castImg"]
-            leftCastImg = cat_img(img,obj["x"],obj["y"],100,100)
-            ready = (classify_hist_with_split(castImg,leftCastImg)>0.5)
-            obj["ready"] = ready
-            print(obj["name"],"ready",ready)
-    return True
-
-    
-#64个图标识别===============================================================================================
-#识别 64个 图标存进 colorArr
-uncheckedNum = 0
-def check64(img):
-    global uncheckedNum
-    colorArr = [([0] * 8) for i in range(8)]
-    start = time.time()
-    imgSize = 76
-    for xIndex,xCenter in enumerate(hArr): 
-        for yIndex,yCenter in enumerate(vArr):
-            imgPart = cat_img(img,xCenter,yCenter,imgSize,imgSize)
-    #         imgArr[yIndex][xIndex] = imgPart
-            color = compare_color(imgPart)
-            colorArr[yIndex][xIndex] = color
-            if (not color) and (uncheckedNum<5):
-                uncheckedNum  += 1
-                print(yIndex,xIndex ,"未识别")
-                return False
-    #         cv2.imwrite(str(yIndex)+str(xIndex)+".bmp",imgPart)
-    #         plt.imshow(imgPart)
-    #         plt.show()
-    #         print(yIndex,xIndex)
-    # plt.imshow(imgArr[0][0])
-    # plt.show()
-
-    end = time.time()
-    print (end-start)
-    print (colorArr)
-    return colorArr
-
-#识别7种颜色
-def compare_color(imgPart):
-    compValue = 0.49
-    if (classify_hist_with_split(imgPart,bImg)[0]>compValue):
-        return "b"
-    if (classify_hist_with_split(imgPart,wImg)>compValue):
-        return "w"
-    if (classify_hist_with_split(imgPart,yImg)>compValue):
-        return "y"
-    if (classify_hist_with_split(imgPart,rImg)>compValue):
-        return "r"
-    if (classify_hist_with_split(imgPart,pImg)>compValue):
-        return "p"
-    if (classify_hist_with_split(imgPart,nImg)>compValue):
-        return "n"
-    if (classify_hist_with_split(imgPart,gImg)>compValue):
-        return "g"
     
 
 

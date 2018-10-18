@@ -1,3 +1,30 @@
+import cv2
+from common.img_process import classify_hist_with_split,cat_img
+
+rImgPath = "base\\red.jpg"
+wImgPath = "base\\white.jpg"
+gImgPath = "base\\green.jpg"
+bImgPath = "base\\blue.jpg"
+pImgPath = "base\\purple.jpg"
+yImgPath = "base\\yellow.jpg"
+nImgPath = "base\\brown.jpg"
+
+rImg = cv2.imread(rImgPath)
+wImg = cv2.imread(wImgPath)
+gImg = cv2.imread(gImgPath)
+bImg = cv2.imread(bImgPath)
+pImg = cv2.imread(pImgPath)
+yImg = cv2.imread(yImgPath)
+nImg = cv2.imread(nImgPath)
+
+rImg = cat_img(rImg,60,60,76,76)
+wImg = cat_img(wImg,60,60,76,76)
+gImg = cat_img(gImg,60,60,76,76)
+bImg = cat_img(bImg,60,60,76,76)
+pImg = cat_img(pImg,60,60,76,76)
+yImg = cat_img(yImg,60,60,76,76)
+nImg = cat_img(nImg,60,60,76,76)
+
 #三消算法===============================================================================================
 #查找最佳可消点
 lastBombPoint = [[-1,-1],[-2,-2],[-3,-3]]
@@ -14,8 +41,10 @@ def find_can_bomb_point(colorArr,weightMap={'w':5,'y':2,'g':5,'n':5,'p':4,'r':6,
                 #防止识别失败,连续移动同一错误位置，导致游戏不能继续
                 if( (bx!=lastBombPoint[0][0] and by!=lastBombPoint[0][1]) or (bx!=lastBombPoint[1][0] and by!=lastBombPoint[1][1]) or (bx!=lastBombPoint[2][0] and by!=lastBombPoint[2][1])):
                     maxBomb = bombInfo
-    del  lastBombPoint[0]
-    lastBombPoint.append([maxBomb["x1"],maxBomb["y1"]])
+    if maxBomb:
+        del  lastBombPoint[0]
+        lastBombPoint.append([maxBomb["x1"],maxBomb["y1"]])
+        print("lastBombPoint",lastBombPoint)
     print(maxBomb)
     return maxBomb
 
@@ -96,3 +125,50 @@ def is_can_bomb(arr,x,y,weightMap):
         } 
     
     return res
+    
+    
+#64个图标识别===============================================================================================
+#识别 64个 图标存进 colorArr
+uncheckedNum = 0
+def check64(img,hArr,vArr):
+    global uncheckedNum
+    colorArr = [([0] * 8) for i in range(8)]
+    
+    imgSize = 76
+    for xIndex,xCenter in enumerate(hArr): 
+        for yIndex,yCenter in enumerate(vArr):
+            imgPart = cat_img(img,xCenter,yCenter,imgSize,imgSize)
+    #         imgArr[yIndex][xIndex] = imgPart
+            color = compare_color(imgPart)
+            colorArr[yIndex][xIndex] = color
+            if (not color) and (uncheckedNum<5):
+                uncheckedNum  += 1
+                print(yIndex,xIndex ,"未识别")
+                return False
+    #         cv2.imwrite(str(yIndex)+str(xIndex)+".bmp",imgPart)
+    #         plt.imshow(imgPart)
+    #         plt.show()
+    #         print(yIndex,xIndex)
+    # plt.imshow(imgArr[0][0])
+    # plt.show()
+
+    
+    print (colorArr)
+    return colorArr
+
+#识别7种颜色
+def compare_color(imgPart):
+    if (classify_hist_with_split(imgPart,bImg)[0]>0.48):
+        return "b"
+    if (classify_hist_with_split(imgPart,wImg)>0.48):
+        return "w"
+    if (classify_hist_with_split(imgPart,yImg)>0.48):
+        return "y"
+    if (classify_hist_with_split(imgPart,rImg)>0.48):
+        return "r"
+    if (classify_hist_with_split(imgPart,pImg)>0.48):
+        return "p"
+    if (classify_hist_with_split(imgPart,nImg)>0.48):
+        return "n"
+    if (classify_hist_with_split(imgPart,gImg)>0.48):
+        return "g"
