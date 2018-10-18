@@ -9,6 +9,9 @@ import pyHook
 import pythoncom
 import multiprocessing
 
+from common.check_bomb import find_can_bomb_point
+from common.comp_img import classify_hist_with_split
+
 # import the module
 from pymouse import PyMouse
 m = PyMouse()
@@ -206,7 +209,7 @@ def moveOnce():
             colorArr = check64(img)
             if not colorArr:
                 return False
-            moveInfo = find_can_bomb_point(colorArr)
+            moveInfo = find_can_bomb_point(colorArr,weightMap)
             if moveInfo:
                 print("moveInfo",moveInfo)
                 x1 = moveInfo["x1"]
@@ -216,8 +219,8 @@ def moveOnce():
                 if moveInfo["weight"] <= 10 and moveInfo["color"]!="w":
                     
                     casting(2)
-                    casting(1)
                     casting(0)
+                    casting(1)
                     #casting(1)
                     
                     
@@ -364,95 +367,7 @@ def compare_color(imgPart):
 
 
 
-#三消算法===============================================================================================
-#查找最佳可消点
-def find_can_bomb_point(colorArr):
-    maxBomb = None
-    for y in range(8):
-        for x in range(8):
-            bombInfo = is_can_bomb(colorArr,x,y)
-            #print (y,x,bombInfo)
-            if bombInfo and (maxBomb==None or maxBomb["weight"] <= bombInfo["weight"]):
-                maxBomb = bombInfo
-    print(maxBomb)
-    return maxBomb
 
-def is_can_bomb(arr,x,y):
-    
-    
-    lWeight = 0
-    tWeight = 0
-    rWeight = 0
-    bWeight = 0
-    
-    t2 = arr[y-2][x] if y-2>=0 else 0
-    t1 = arr[y-1][x] if y-1>=0 else 0
-    b1 = arr[y+1][x] if y+1<len(arr) else 0
-    b2 = arr[y+2][x] if y+2<len(arr) else 0
-    l2 = arr[y][x-2] if x-2>=0 else 0
-    l1 = arr[y][x-1] if x-1>=0 else 0
-    r1 = arr[y][x+1] if x+1<len(arr) else 0
-    r2 = arr[y][x+2] if x+2<len(arr) else 0
-    
-    if (b1==l1 and l1==r1) or (b1==l1 and l1==l2) or (b1==r1 and r1==r2) or (b1==t1 and t1==t2):
-        bWeight = weightMap[b1]
-        if (l1==l2 and l1==r1) or (r1==r2 and l1==r1):
-            bWeight*=10
-        if (l1==l2 and r1==r2 and l1 and r1 and l1==r1) or (l1==l2 and t1==t2 and l1 and t1 and l1==t1) or (t1==t2 and r1==r2 and t1 and r1 and t1==r1) or (r1==l1 and t1==b1 and b1==t2):
-            bWeight*=100
-    if (t1==l1 and l1==r1) or (t1==l1 and l1==l2) or (t1==r1 and r1==r2) or (t1==b1 and b1==b2):
-        tWeight = weightMap[t1]
-        if (l1==l2 and l1==r1) or (r1==r2 and l1==r1):
-            tWeight*=10
-        if (l1==l2 and r1==r2 and l1 and r1 and l1==r1) or (l1==l2 and b1==b2 and l1 and b1 and l1==b1) or (b1==b2 and r1==r2 and b1 and r1 and b1==r1) or (r1==l1 and t1==b1 and t1==b2):
-            tWeight*=100
-    if (l1==b1 and b1==t1) or (l1==t1 and t1==t2) or (l1==b1 and b1==b2) or (l1==r1 and r1==r2):
-        lWeight = weightMap[l1]
-        if (t1==t2 and t1==b1) or (b1==b2 and t1==b1):
-            lWeight*=10
-        if (b1==b2 and r1==r2 and b1 and r1 and b1==r1) or (b1==b2 and t1==t2 and b1 and t1 and b1==t1) or (t1==t2 and r1==r2 and t1 and r1 and t1==r1) or (r1==l1 and t1==b1 and l1==r2):
-            lWeight*=100
-    if (r1==b1 and b1==t1) or (r1==t1 and t1==t2) or (r1==b1 and b1==b2) or (r1==l1 and l1==l2):
-        rWeight = weightMap[r1]
-        if (t1==t2 and t1==b1) or (b1==b2 and t1==b1):
-            rWeight*=10
-        if (l1==l2 and t1==t2 and l1 and t1 and l1==t1) or (l1==l2 and b1==b2 and l1 and b1 and l1==b1) or (t1==t2 and b1==b2 and t1 and b1 and t1==b1) or (r1==l1 and t1==b1 and r1==l2):
-            rWeight*=100
-    weight = max(tWeight,rWeight,bWeight,lWeight)
-    color = None
-    x2 = x
-    y2 = y
-    if(tWeight==weight):
-        direction = "t"
-        color = t1
-        y2 = y-1
-    elif(bWeight==weight):
-        direction = "b"
-        color = b1
-        y2 = y+1
-    elif(lWeight==weight):
-        direction = "l"
-        color = l1
-        x2 = x-1
-    elif(rWeight==weight):
-        direction = "r"
-        color = r1
-        x2 = x+1
-   
-    if weight==0:
-         res = False
-    else:
-        res = {
-            "color":color,
-            "direction":direction,
-            "weight":weight,
-            "x1":x,
-            "y1":y,
-            "x2":x2,
-            "y2":y2,
-        } 
-    
-    return res
 
 
 #window操作========================================================================================================
@@ -511,106 +426,7 @@ def window_capture(filename):
 
     
 
-#图片比较基础========================================================================================================
-# 最简单的以灰度直方图作为相似比较的实现  
-def classify_gray_hist(image1,image2,size = (256,256)):  
-    # 先计算直方图  
-    # 几个参数必须用方括号括起来  
-    # 这里直接用灰度图计算直方图，所以是使用第一个通道，  
-    # 也可以进行通道分离后，得到多个通道的直方图  
-    # bins 取为16  
-    image1 = cv2.resize(image1,size)  
-    image2 = cv2.resize(image2,size)  
-    hist1 = cv2.calcHist([image1],[0],None,[256],[0.0,255.0])  
-    hist2 = cv2.calcHist([image2],[0],None,[256],[0.0,255.0])  
-    # 可以比较下直方图  
-    plt.plot(range(256),hist1,'r')  
-    plt.plot(range(256),hist2,'b')  
-    plt.show()  
-    # 计算直方图的重合度  
-    degree = 0  
-    for i in range(len(hist1)):  
-        if hist1[i] != hist2[i]:  
-            degree = degree + (1 - abs(hist1[i]-hist2[i])/max(hist1[i],hist2[i]))  
-        else:  
-            degree = degree + 1  
-    degree = degree/len(hist1)  
-    return degree  
-  
-# 计算单通道的直方图的相似值  
-def calculate(image1,image2):  
-    hist1 = cv2.calcHist([image1],[0],None,[256],[0.0,255.0])  
-    hist2 = cv2.calcHist([image2],[0],None,[256],[0.0,255.0])  
-     # 计算直方图的重合度  
-    degree = 0  
-    for i in range(len(hist1)):  
-        if hist1[i] != hist2[i]:  
-            degree = degree + (1 - abs(hist1[i]-hist2[i])/max(hist1[i],hist2[i]))  
-        else:  
-            degree = degree + 1  
-    degree = degree/len(hist1)  
-    return degree  
-  
-# 通过得到每个通道的直方图来计算相似度  
-def classify_hist_with_split(image1,image2,size = (256,256)):  
-    # 将图像resize后，分离为三个通道，再计算每个通道的相似值  
-    image1 = cv2.resize(image1,size)  
-    image2 = cv2.resize(image2,size)  
-    sub_image1 = cv2.split(image1)  
-    sub_image2 = cv2.split(image2)  
-    sub_data = 0  
-    for im1,im2 in zip(sub_image1,sub_image2):  
-        sub_data += calculate(im1,im2)  
-    sub_data = sub_data/3  
-    return sub_data  
-  
-# 平均哈希算法计算  
-def classify_aHash(image1,image2):  
-    image1 = cv2.resize(image1,(8,8))  
-    image2 = cv2.resize(image2,(8,8))  
-    gray1 = cv2.cvtColor(image1,cv2.COLOR_BGR2GRAY)  
-    gray2 = cv2.cvtColor(image2,cv2.COLOR_BGR2GRAY)  
-    hash1 = getHash(gray1)  
-    hash2 = getHash(gray2)  
-    return Hamming_distance(hash1,hash2)  
-  
-def classify_pHash(image1,image2):  
-    image1 = cv2.resize(image1,(32,32))  
-    image2 = cv2.resize(image2,(32,32))  
-    gray1 = cv2.cvtColor(image1,cv2.COLOR_BGR2GRAY)  
-    gray2 = cv2.cvtColor(image2,cv2.COLOR_BGR2GRAY)  
-    # 将灰度图转为浮点型，再进行dct变换  
-    dct1 = cv2.dct(np.float32(gray1))  
-    dct2 = cv2.dct(np.float32(gray2))  
-    # 取左上角的8*8，这些代表图片的最低频率  
-    # 这个操作等价于c++中利用opencv实现的掩码操作  
-    # 在python中进行掩码操作，可以直接这样取出图像矩阵的某一部分  
-    dct1_roi = dct1[0:8,0:8]  
-    dct2_roi = dct2[0:8,0:8]  
-    hash1 = getHash(dct1_roi)  
-    hash2 = getHash(dct2_roi)  
-    return Hamming_distance(hash1,hash2)  
-  
-# 输入灰度图，返回hash  
-def getHash(image):  
-    avreage = np.mean(image)  
-    hash = []  
-    for i in range(image.shape[0]):  
-        for j in range(image.shape[1]):  
-            if image[i,j] > avreage:  
-                hash.append(1)  
-            else:  
-                hash.append(0)  
-    return hash  
-  
-  
-# 计算汉明距离
-def Hamming_distance(hash1,hash2):  
-    num = 0  
-    for index in range(len(hash1)):  
-        if hash1[index] != hash2[index]:  
-            num += 1  
-    return num  
+
     
 
 def worker(isLoop):
