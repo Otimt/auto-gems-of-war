@@ -1,16 +1,11 @@
-from tkinter import *
-
 import socket
+ip_port = ('127.0.0.1',9999)
 
-obj = socket.socket()
-obj.connect(("127.0.0.1",8765))
+sk = socket.socket(socket.AF_INET,socket.SOCK_DGRAM,0)
+while True:
+    inp = input('数据：').strip()
+    if inp == 'exit':
+        break
+    sk.sendto(bytes(inp,encoding='utf8'),ip_port)
 
-ret = str(obj.recv(1024),encoding="utf-8")
-print(ret)
-
-
-def gui_start():
-    init_window = Tk()        #实例化出一个父窗口
-    init_window.mainloop()    #父窗口进入事件循环，可以理解为保持窗口运行，否则界面不展示
-
-#gui_start()
+sk.close()
