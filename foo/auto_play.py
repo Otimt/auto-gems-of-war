@@ -33,28 +33,28 @@ leftList = [{
     "x":319,
     "y":189,
     "name":"huozhadan",
-    "target":True,
+    "target":False,
     "castImg":None,
     "order":1
 },{
     "x":319,
     "y":442,
     "name":"huozhadan",
-    "target":True,
+    "target":False,
     "castImg":None,
     "order":2
 },{
     "x":319,
     "y":699,
     "name":"taiyangniao",
-    "target":True,
+    "target":False,
     "castImg":None,
     "order":3
 },{
     "x":319,
     "y":952,
     "name":False,
-    "target":True,
+    "target":False,
     "castImg":None,
     "order":4
 }]
@@ -63,10 +63,10 @@ weightMap = {
     'w':6,
     'y':3,
     'g':2,
-    'n':3,
-    'p':5,
+    'n':4,
+    'p':3,
     'r':5,
-    'b':4,
+    'b':3,
     0:0,
     None:0
 }
@@ -105,15 +105,16 @@ def moveOnce():
                 y2 = moveInfo["y2"]
                 if moveInfo["weight"] <= 10 and moveInfo["color"]!="w":
                     
-                    casting(2)
-                    casting(0)
                     casting(1)
-                    #casting(1)
+                    casting(0)
+                    casting(2)
+                    casting(3)
                     
                     
                     
                     
-                    
+                    m.click(2,2)
+                    time.sleep(0.1)
                     m.click(hArr[x1],vArr[y1])
                     time.sleep(0.1)
                 
