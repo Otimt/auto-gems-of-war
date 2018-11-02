@@ -9,6 +9,7 @@ import pyHook
 import pythoncom
 import multiprocessing
 import logging
+import json
 
 logging.basicConfig(
     level=logging.DEBUG,#控制台打印的日志级别
@@ -31,50 +32,27 @@ m = PyMouse()
 
 logging.info("启动auto_jjc")
 
+#火鸟炸弹
+bombJsonPath = "strategy/bomb.json"
+#贪枪
+goldJsonPath = "strategy/gold.json"
+#魂刷
+soulJsonPath = "strategy/soul.json"
+#周活动
+weekJsonPath = "strategy/week.json"
+#刑天
+xingJsonPath = "strategy/xing.json"
 
-
+strategy = json.load(open(bombJsonPath,'r'))
+#我方数组
+leftList = strategy["team"]
+#todo 对leftList按order排序
+#珠子权重
+weightMap = strategy["weightMap"]
     
 hArr = [545,662,780,899,1018,1137,1253,1373]
 vArr = [140,261,378,495,618,737,851,973]
 
-
-#我方数组
-leftList = [{
-    "x":319,
-    "y":189,
-    "name":"shanmaifensuizhe",
-    "target":True,
-    "castImg":None
-},{
-    "x":319,
-    "y":442,
-    "name":"xingtian",
-    "target":True,
-    "castImg":None
-},{
-    "x":319,
-    "y":699,
-    "name":"duyaodashi",
-    "target":True,
-    "castImg":None
-},{
-    "x":319,
-    "y":952,
-    "name":"",
-    "target":True,
-    "castImg":None
-}]
-weightMap = {
-    'w':6,
-    'y':2,
-    'g':5,
-    'n':4,
-    'p':3,
-    'r':5,
-    'b':3,
-    0:0,
-    None:0
-}
 
 init_left(leftList)
 
@@ -111,12 +89,13 @@ def moveOnce():
                 y1 = moveInfo["y1"]
                 x2 = moveInfo["x2"]
                 y2 = moveInfo["y2"]
-                if moveInfo["weight"] <= 10  and moveInfo["color"]!="w":
+                #优先移动的珠子，权重直接写11以上
+                if moveInfo["weight"] <= 10 :
                     
-                    casting(2)
+                    casting(0)
                     casting(1)
+                    casting(2)
                     casting(3)
-                    #casting(2)
                     
                     
                     m.click(2,2)

@@ -4,25 +4,29 @@
         "y":189,
         "name":"shanmaifensuizhe",
         "target":false,
-        "castImg":null
+        "castImg":null,
+        "order":2
     },{
         "x":319,
         "y":442,
         "name":"xingtian",
         "target":false,
-        "castImg":null
+        "castImg":null,
+        "order":3
     },{
         "x":319,
         "y":699,
         "name":"duyaodashi",
         "target":false,
-        "castImg":null
+        "castImg":null,
+        "order":5
     },{
         "x":319,
         "y":952,
         "name":"",
         "target":false,
-        "castImg":null
+        "castImg":null,
+        "order":1
     }],
     "weightMap" : {
         "w":5,
