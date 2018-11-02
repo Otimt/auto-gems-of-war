@@ -1,0 +1,36 @@
+{
+    "team":[{
+        "x":319,
+        "y":189,
+        "name":"shanmaifensuizhe",
+        "target":false,
+        "castImg":null
+    },{
+        "x":319,
+        "y":442,
+        "name":"xingtian",
+        "target":false,
+        "castImg":null
+    },{
+        "x":319,
+        "y":699,
+        "name":"duyaodashi",
+        "target":false,
+        "castImg":null
+    },{
+        "x":319,
+        "y":952,
+        "name":"",
+        "target":false,
+        "castImg":null
+    }],
+    "weightMap" : {
+        "w":5,
+        "y":2,
+        "g":5,
+        "n":5,
+        "p":4,
+        "r":6,
+        "b":2
+    }
+}
