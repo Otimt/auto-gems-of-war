@@ -45,3 +45,15 @@ multiprocessing
 1. Tkinter 是使用 python 进行窗口视窗设计的模块。Tkinter模块("Tk 接口")是Python的标准Tk GUI工具包的接口。作为 python 特定的GUI界面，是一个图像的窗口，tkinter是python 自带的，可以编辑的GUI界面。  
 2. wxPython是一个开源的、跨平台的、使用C++开发的GUI工具库，目前支持Windows、大多数的Unix和Linux以及苹果Mac OSX以及手机操作系统iOS、Sybian、android等。boaconstructor可以帮助我们快速可视地构建wxwidgets界面。  
 3. Qt同样是一种开源的GUI库，Qt的类库大约在300多个，函数大约在5700多个。Qt同样适合于大型应用，由它自带的qt designer可以让我们轻松来构建界面元素。
+
+#### 异常处理
+```
+try：
+    pass
+except (IOError ,ZeroDivisionError),e:
+    print e
+```
+
+#### 日志
+1. 异常日志
+2. 开局日志
