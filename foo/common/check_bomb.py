@@ -34,6 +34,8 @@ def find_can_bomb_point(colorArr,weightMap={'w':5,'y':2,'g':5,'n':5,'p':4,'r':6,
     for y in range(8):
         for x in range(8):
             bombInfo = is_can_bomb(colorArr,x,y,weightMap)
+            if bombInfo:
+                print(bombInfo)
             #print (y,x,bombInfo)
             if bombInfo and (maxBomb==None or maxBomb["weight"] <= bombInfo["weight"]):
                 bx = bombInfo["x1"]
@@ -44,7 +46,7 @@ def find_can_bomb_point(colorArr,weightMap={'w':5,'y':2,'g':5,'n':5,'p':4,'r':6,
     if maxBomb:
         del  lastBombPoint[0]
         lastBombPoint.append([maxBomb["x1"],maxBomb["y1"]])
-        print("lastBombPoint",lastBombPoint)
+        print("上次爆破数组",lastBombPoint)
     print(maxBomb)
     return maxBomb
 

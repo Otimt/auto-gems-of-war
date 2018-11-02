@@ -8,6 +8,18 @@ import gc
 import pyHook
 import pythoncom
 import multiprocessing
+import logging
+
+logging.basicConfig(
+    level=logging.DEBUG,#控制台打印的日志级别
+    filename='new.log',
+    filemode='a',##模式，有w和a，w就是写模式，每次都会重新写日志，覆盖之前的日志
+    #a是追加模式，默认如果不写的话，就是追加模式
+    format= '%(asctime)s - %(pathname)s[line:%(lineno)d] - %(levelname)s: %(message)s'
+    #日志格式
+)
+
+
 
 from common.check_bomb import find_can_bomb_point,check64
 from common.img_process import classify_hist_with_split,cat_img
@@ -17,7 +29,7 @@ from common.game_action import *
 from pymouse import PyMouse
 m = PyMouse()
 
-
+logging.info("启动auto_jjc")
 
 
 
@@ -31,35 +43,35 @@ leftList = [{
     "x":319,
     "y":189,
     "name":"shanmaifensuizhe",
-    "target":False,
+    "target":True,
     "castImg":None
 },{
     "x":319,
     "y":442,
     "name":"xingtian",
-    "target":False,
+    "target":True,
     "castImg":None
 },{
     "x":319,
     "y":699,
     "name":"duyaodashi",
-    "target":False,
+    "target":True,
     "castImg":None
 },{
     "x":319,
     "y":952,
     "name":"",
-    "target":False,
+    "target":True,
     "castImg":None
 }]
 weightMap = {
-    'w':5,
+    'w':6,
     'y':2,
     'g':5,
-    'n':5,
-    'p':4,
-    'r':6,
-    'b':2,
+    'n':4,
+    'p':3,
+    'r':5,
+    'b':3,
     0:0,
     None:0
 }
@@ -99,11 +111,11 @@ def moveOnce():
                 y1 = moveInfo["y1"]
                 x2 = moveInfo["x2"]
                 y2 = moveInfo["y2"]
-                if moveInfo["weight"] <= 10:
+                if moveInfo["weight"] <= 10  and moveInfo["color"]!="w":
                     
-                    casting(1)
-                    casting(0)
                     casting(2)
+                    casting(1)
+                    casting(3)
                     #casting(2)
                     
                     
@@ -206,8 +218,17 @@ def worker(isLoop):
         print("循环中",isLoop)
         if isLoop:
             print("loop循环中",isLoop)
-            moveOnce()
-        time.sleep(1)
+            try:
+                moveOnce()
+            except BaseException  as e:
+                print (e)
+                #logging.debug('debug 信息')
+                #logging.info('info 信息')
+                #logging.warning('warning 信息')
+                logging.error('error 信息',e)
+                #logging.critical('critial 信息')
+            
+        time.sleep(1.2)
         
         
 mainProgress = None
@@ -218,20 +239,20 @@ def onKeyboardEvent(event):
     #最近使用PyUserInput的KeyboardEvent的时候遇到了KeyboardSwitch() missing 8的情况;
     #该问题具体表现在当你focus的那个进程的窗口title带中文, 就会出现上面那个错误, 如果都是英文或者其他ascii字符则不会;
 
-    print ("MessageName:", event.MessageName)
-    print ("Message:", event.Message)
-    print ("Time:", event.Time)
-    print ("Window:", event.Window)
-    print ("WindowName:", event.WindowName)
-    print ("Ascii:", event.Ascii, chr(event.Ascii))
+    #print ("MessageName:", event.MessageName)
+    #print ("Message:", event.Message)
+    #print ("Time:", event.Time)
+    #print ("Window:", event.Window)
+    #print ("WindowName:", event.WindowName)
+    #print ("Ascii:", event.Ascii, chr(event.Ascii))
     print ("Key:", event.Key)
-    print ("KeyID:", event.KeyID)
-    print ("ScanCode:", event.ScanCode)
-    print ("Extended:", event.Extended)
-    print ("Injected:", event.Injected)
-    print ("Alt", event.Alt)
-    print ("Transition", event.Transition)
-    print ("---")
+    #print ("KeyID:", event.KeyID)
+    #print ("ScanCode:", event.ScanCode)
+    #print ("Extended:", event.Extended)
+    #print ("Injected:", event.Injected)
+    #print ("Alt", event.Alt)
+    #print ("Transition", event.Transition)
+    #print ("---")
     
     if event.Key=="S":
         isLoop = True

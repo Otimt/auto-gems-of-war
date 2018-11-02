@@ -165,7 +165,7 @@ def check_left(img):
     return True
 
 #点击继续
-resetX = 1208
+resetX = 1266
 def continue_click():
     
     m.click(resetX,1020)
