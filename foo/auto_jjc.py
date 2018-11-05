@@ -46,7 +46,8 @@ xingJsonPath = "strategy/xing.json"
 strategy = json.load(open(bombJsonPath,'r'))
 #我方数组
 leftList = strategy["team"]
-#todo 对leftList按order排序
+#对leftList按order排序
+leftList = sorted(leftList, key=lambda student: student['order'],reverse=True)
 #珠子权重
 weightMap = strategy["weightMap"]
     
