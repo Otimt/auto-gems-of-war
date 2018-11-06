@@ -3,37 +3,41 @@
         "x":319,
         "y":189,
         "name":"shanmaifensuizhe",
-        "target":false,
-        "castImg":null,
-        "order":2
-    },{
-        "x":319,
-        "y":442,
-        "name":"xingtian",
+        "fullName":"山脉粉碎者",
         "target":false,
         "castImg":null,
         "order":3
     },{
         "x":319,
-        "y":699,
-        "name":"duyaodashi",
+        "y":442,
+        "name":"xingtian",
+        "fullName":"刑天",
         "target":false,
         "castImg":null,
         "order":5
     },{
         "x":319,
+        "y":699,
+        "name":"duyaodashi",
+        "fullName":"毒药大师",
+        "target":false,
+        "castImg":null,
+        "order":4
+    },{
+        "x":319,
         "y":952,
-        "name":"",
+        "name":"gelifu-shiyu",
+        "fullName":"格里夫·石羽",
         "target":false,
         "castImg":null,
         "order":1
     }],
     "weightMap" : {
-        "w":5,
-        "y":2,
+        "w":11,
+        "y":4,
         "g":5,
-        "n":5,
-        "p":4,
+        "n":4,
+        "p":2,
         "r":6,
         "b":2
     }
