@@ -1,17 +1,35 @@
+
 import socket
+import json
+import time
+import sys
+import cv2
+sys.path.append('../')
+from common.window_action import *
 
 client = socket.socket()
 
-client.connect(('localhost',4424))  #连接服务器
+client.connect(('134.175.49.115',4424))  #连接服务器
 
 while True:
-    msg = input(">>:").strip()
-    if len(msg) == 0 :continue
-    client.send(msg.encode())   #发送数据
+    #msg = input(">>:").strip()
+    #if len(msg) == 0 :continue
+    #client.send(msg.encode())   #发送数据
 
-    data = client.recv(1024)    #接收数据
-    print("返回数据:",data.decode())
-
+    dataStr = client.recv(1024)    #接收数据
+    dataStr = dataStr.decode()
+    print("返回数据:",dataStr)
+    if (dataStr != ""):
+        data = json.loads(dataStr)
+        code = data['code']
+        if (code == 'window_capture'):
+            print("截图")
+            imgPath = "game2.jpg"
+            window_capture(imgPath)
+        elif (code == 'click'):
+            print("截图")
+            mouse_click(data['x'],data['y'])
+    time.sleep(1)
 
 client.close()
 #---------------------

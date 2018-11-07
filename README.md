@@ -22,21 +22,25 @@ Python OpenCV 图像相识度对比——hist直方图比较
 三消游戏提示算法，十字检测 64*8  
 todo 所有可移动步骤记录进数组  
 - 下落后检测  
-todo 检测三种下落后可连消形状  
+todo 检测4种下落后可连消形状  
   1. AAXX  
 XXAA  
   2. XXAX  
 XXXX    
 XXXX  
 AAXA　　
-  3. A  
-A  
-X  
-X  
-X  
-A  
-A  
-
+  3. XAX  
+XAX  
+XBX  
+BXB  
+XBX  
+XAX  
+XAX  
+  4. XXAXX  
+BXAXB  
+XBBBX  
+BXAXB  
+XXAXX  
 
 #### 鼠标操作
 pymouse  
