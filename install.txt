@@ -1,0 +1,12 @@
+pip install pywin32
+pip install numpy
+pip install matplotlib
+pip install opencv-python 
+pip install PyMouse 
+pip install pyuserinput 
+
+
+http://www.dependencywalker.com/ 下载depends 查看缺失的dll
+复制 缺失的dll
+MF.dll
+MFPLAT.dll

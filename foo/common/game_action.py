@@ -139,13 +139,13 @@ def check_fight(img):
 leftList = [];
 def init_left(list):
     global leftList
-    for obj in list:
-        if obj["name"]:
-            path = "cast\\"+obj["name"]+".png"
-            print(path)
-            castImg = cv2.imread(path)
-            print(len(castImg))
-            obj["castImg"] = castImg
+    #for obj in list:
+        #if obj["name"]:
+            #path = "cast\\"+obj["name"]+".png"
+            #print(path)
+            #castImg = cv2.imread(path)
+            #print(len(castImg))
+            #obj["castImg"] = castImg
     leftList = list
     return True
     
@@ -173,9 +173,9 @@ def continue_click():
     m.click(resetX,1020)
     time.sleep(0.25)
     #点击选择升级
-    m.click(resetX,950)
+    m.click(resetX-400,950)
     time.sleep(0.25)
-    m.click(resetX,950)
+    m.click(resetX-400,950)
     time.sleep(0.25)
     #跳过每日活动
     m.click(1902,950)

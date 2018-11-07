@@ -44,13 +44,15 @@ weekJsonPath = "strategy/week.json"
 #刑天
 xingJsonPath = "strategy/xing.json"
 
-strategy = json.load(open(bombJsonPath,'r'))
+strategy = json.load(open(weekJsonPath,'r'))
 #我方数组
 leftList = strategy["team"]
 #对leftList按order排序
 leftList = sorted(leftList, key=lambda student: student['order'],reverse=True)
 #珠子权重
 weightMap = strategy["weightMap"]
+weightMap[0] = 0
+weightMap[None] = 0
     
 hArr = [545,662,780,899,1018,1137,1253,1373]
 vArr = [140,261,378,495,618,737,851,973]
@@ -80,7 +82,7 @@ def moveOnce():
         check_right(img)
         if not is_all_right_dead(img):
             #敌方未全灭
-            check_left(img)
+            #check_left(img)
             colorArr = check64(img,hArr,vArr)
             if not colorArr:
                 return False
@@ -152,10 +154,10 @@ def worker(isLoop):
                 #logging.debug('debug 信息')
                 #logging.info('info 信息')
                 #logging.warning('warning 信息')
-                logging.error('error 信息',e)
+                logging.error('error 信息 出错误了',e)
                 #logging.critical('critial 信息')
             
-        time.sleep(1.2)
+        time.sleep(2)
         
         
 mainProgress = None
