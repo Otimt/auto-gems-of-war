@@ -1,0 +1,117 @@
+<html>
+    <head>
+    <title>auto-gems-of-war-manage</title>
+    <meta charset="utf-8">
+    <style>
+        .jietu-img{
+            width:100%;
+        }
+    </style>
+    </head>
+    <body>
+        啦啦啦
+        <img class="jietu-img" src="game2.jpg" alt="">
+        <table>
+            <tr>
+                <td>秘钥</td><td><input id="password-ipt" type="text"></td>
+            </tr>
+            <tr>
+                <td>截图</td><td><button id="jietu-btn">截图</button></td>
+            </tr>
+            <tr>
+                <td>点击</td><td><input id="click-position-ipt" type="text"><button id="click-btn">点击</button></td>
+            </tr>
+            <tr>
+                <td>按键</td><td><input id="keyboard-key-ipt" type="text"><button id="keyboard-btn">按键</button></td>
+            </tr>
+            <tr>
+                <td>循环</td><td><button id="loop-start-btn">启动</button><button id="loop-stop-btn">停止</button></td>
+            </tr>
+            <tr>
+                <td>执行预设</td><td><button id="retreat-btn">撤退</button></td>
+            </tr>
+            <tr>
+                <td>关机</td><td><button id="shutdown-btn">关机</button></td>
+            </tr>
+
+        </table>
+    </body>
+    <script src="js/jquery.js"></script>
+    <script>
+        $(function(){
+            var apiUrl = "/api"
+            $("#jietu-btn").click(function(){
+                //todo 截图
+                var data = {
+                    password:$("password-ipt").val(),
+                    method:"jietu",
+                }
+                $.get(apiUrl,data,function(data){
+
+                })
+            })
+            $("#click-btn").click(function(){
+                //todo 点击
+                var data = {
+                    password:$("password-ipt").val(),
+                    position:$("#click-position-ipt").val(),
+                    method:"click",
+                }
+                $.get(apiUrl,data,function(data){
+
+                })
+            })
+            $("#keyboard-btn").click(function(){
+                //todo 按键
+                var data = {
+                    password:$("password-ipt").val(),
+                    key:$("#keyboard-key-ipt").val(),
+                    method:"keyboard",
+                }
+                $.get(apiUrl,data,function(data){
+
+                })
+            })
+            $("#loop-start-btn").click(function(){
+                //todo 启动循环
+                var data = {
+                    password:$("password-ipt").val(),
+                    method:"loop-start",
+                }
+                $.get(apiUrl,data,function(data){
+
+                })
+            })
+            $("#loop-stop-btn").click(function(){
+                //todo 停止循环
+                var data = {
+                    password:$("password-ipt").val(),
+                    method:"loop-stop",
+                }
+                $.get(apiUrl,data,function(data){
+
+                })
+            })
+            $("#retreat-btn").click(function(){
+                //todo 撤退
+                var data = {
+                    password:$("password-ipt").val(),
+                    method:"retreat",
+                }
+                $.get(apiUrl,data,function(data){
+
+                })
+            })
+            $("#shutdown-btn").click(function(){
+                //todo 关机
+                var data = {
+                    password:$("password-ipt").val(),
+                    method:"shutdown",
+                }
+                $.get(apiUrl,data,function(data){
+
+                })
+            })
+        })
+    </script>
+</html>
