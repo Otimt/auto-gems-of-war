@@ -154,7 +154,7 @@ def worker(isLoop):
                 #logging.debug('debug 信息')
                 #logging.info('info 信息')
                 #logging.warning('warning 信息')
-                logging.error('error 信息 出错误了',e)
+                logging.error('error 信息 出错误了')
                 #logging.critical('critial 信息')
             
         time.sleep(2)
