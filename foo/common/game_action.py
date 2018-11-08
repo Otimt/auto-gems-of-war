@@ -187,7 +187,7 @@ def continue_click():
 def casting(leftIndex):
     obj = leftList[leftIndex]
     #if(obj["ready"]):
-    if(True):
+    if(obj["name"]):
     
         m.click(obj["x"],obj["y"])#选中军队
         time.sleep(0.1)
