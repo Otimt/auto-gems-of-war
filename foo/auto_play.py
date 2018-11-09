@@ -8,6 +8,17 @@ import gc
 import pyHook
 import pythoncom
 import multiprocessing
+import logging
+import json
+
+logging.basicConfig(
+    level=logging.DEBUG,#控制台打印的日志级别
+    filename='new.log',
+    filemode='a',##模式，有w和a，w就是写模式，每次都会重新写日志，覆盖之前的日志
+    #a是追加模式，默认如果不写的话，就是追加模式
+    format= '%(asctime)s - %(pathname)s[line:%(lineno)d] - %(levelname)s: %(message)s'
+    #日志格式
+)
 
 from common.check_bomb import find_can_bomb_point,check64
 from common.img_process import classify_hist_with_split,cat_img
@@ -33,27 +44,27 @@ leftList = [{
     "x":319,
     "y":189,
     "name":"huozhadan",
-    "target":False,
+    "target":True,
     "castImg":None,
     "order":1
 },{
     "x":319,
     "y":442,
     "name":"huozhadan",
-    "target":False,
+    "target":True,
     "castImg":None,
     "order":2
 },{
     "x":319,
     "y":699,
-    "name":"taiyangniao",
+    "name":"",
     "target":False,
     "castImg":None,
     "order":3
 },{
     "x":319,
     "y":952,
-    "name":False,
+    "name":"",
     "target":False,
     "castImg":None,
     "order":4
@@ -61,11 +72,11 @@ leftList = [{
 #权重数组
 weightMap = {
     'w':6,
-    'y':3,
+    'y':5,
     'g':2,
     'n':4,
-    'p':3,
-    'r':5,
+    'p':5,
+    'r':1,
     'b':3,
     0:0,
     None:0
@@ -92,7 +103,7 @@ def moveOnce():
         check_right(img)
         if not is_all_right_dead(img):
             #敌方未全灭
-            check_left(img)
+            #check_left(img)
             colorArr = check64(img,hArr,vArr)
             if not colorArr:
                 return False
@@ -107,17 +118,19 @@ def moveOnce():
                     
                     casting(1)
                     casting(0)
-                    casting(2)
+                    #casting(2)
                     casting(3)
                     
                     
                     
                     
-                    m.click(2,2)
+                    
+                    m.click(hArr[x1],vArr[y1])
                     time.sleep(0.1)
                     m.click(hArr[x1],vArr[y1])
                     time.sleep(0.1)
-                
+                m.click(2,2)
+                time.sleep(0.1)
                 mouse_drag(hArr[x1],vArr[y1],hArr[x2],vArr[y2])
                 print(hArr[x1],vArr[y1],hArr[x2],vArr[y2])
                 time.sleep(2)
@@ -212,7 +225,15 @@ def worker(isLoop):
         print("循环中",isLoop)
         if isLoop:
             print("loop循环中",isLoop)
-            moveOnce()
+            try:
+                moveOnce()
+            except BaseException  as e:
+                print (e)
+                #logging.debug('debug 信息')
+                #logging.info('info 信息')
+                #logging.warning('warning 信息')
+                logging.error('error 信息 出错误了')
+                #logging.critical('critial 信息')
         time.sleep(1)
         
         

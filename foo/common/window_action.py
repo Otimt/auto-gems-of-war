@@ -1,4 +1,5 @@
 import win32gui, win32ui, win32con, win32api
+import time
 from pymouse import PyMouse
 m = PyMouse()
 
