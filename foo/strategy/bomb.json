@@ -2,39 +2,39 @@
   "team":[{
     "x":319,
     "y":189,
-    "name":"shanmaifensuizhe",
+    "name":"zhanzhengyuheping",
     "target":false,
     "castImg":null,
-    "order":2
+    "order":4
   },{
     "x":319,
     "y":442,
-    "name":"xingtian",
-    "target":false,
-    "castImg":null,
-    "order":3
-  },{
-    "x":319,
-    "y":699,
-    "name":"duyaodashi",
+    "name":"taiyangniao",
     "target":false,
     "castImg":null,
     "order":5
   },{
     "x":319,
-    "y":952,
-    "name":"",
+    "y":699,
+    "name":"huozhadan",
     "target":false,
     "castImg":null,
-    "order":1
+    "order":3
+  },{
+    "x":319,
+    "y":952,
+    "name":"huozhadan",
+    "target":false,
+    "castImg":null,
+    "order":3
   }],
   "weightMap" : {
-    "w":5,
-    "y":2,
-    "g":5,
-    "n":5,
-    "p":4,
-    "r":6,
-    "b":2
+    "w":11,
+    "y":1,
+    "g":2,
+    "n":3,
+    "p":5,
+    "r":5,
+    "b":1
   }
 }
