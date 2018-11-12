@@ -7,35 +7,62 @@ from common.img_process import classify_hist_with_split,cat_img
 from pymouse import PyMouse
 m = PyMouse()
 
+#操作系统桌面
+windowsImgPath = "base\\windows.png"
+windowsImg = cv2.imread(windowsImgPath)
+windowsImg = cat_img(windowsImg,20,1060,40,40)
 
+#主界面
 jjcEnterPath = "base\\jjc_enter.png"
-prepareImgPath = "base\\prepare.png"
-jjcPrepareImgPath = "base\\jjc-prepare.png"
-realJjcPrepareImgPath = "base\\real-jjc-prepare.png"
+jjcEnterImg = cv2.imread(jjcEnterPath)
 
+#探索 准备界面
+prepareImgPath = "base\\prepare.png"
+prepareImg = cv2.imread(prepareImgPath)
+prepareBtn = cat_img(prepareImg,952,1010,200,50)
+
+#pvp 休闲战 准备界面
+jjcPrepareImgPath = "base\\jjc-prepare.png"
+
+#pvp 排位战 准备界面
+realJjcPrepareImgPath = "base\\real-jjc-prepare.png"
+jjcPrepareImg = cv2.imread(realJjcPrepareImgPath)
+jjcPrepareBtn = cat_img(jjcPrepareImg,959,1009,241,53)
+
+#敌方是否生存判断 2018-11-12 10:01:27 未使用这些图片
 dead1ImgPath = "base\\right_dead_1.png"
 dead2ImgPath = "base\\right_dead_2.png"
 dead3ImgPath = "base\\right_dead_3.png"
 dead4ImgPath = "base\\right_dead_4.png"
-fightLeftImgPath = "base\\fight_left.png"
-fightRightImgPath = "base\\fight_right.png"
-overImgPath = "base\\over.png"
-
-jjcEnterImg = cv2.imread(jjcEnterPath)
-prepareImg = cv2.imread(prepareImgPath)
-jjcPrepareImg = cv2.imread(realJjcPrepareImgPath)
-prepareImg = cv2.imread(prepareImgPath)
 dead1Img  = cv2.imread(dead1ImgPath)
 dead2Img  = cv2.imread(dead2ImgPath)
 dead3Img  = cv2.imread(dead3ImgPath)
 dead4Img  = cv2.imread(dead4ImgPath)
+
+#战斗中 左上角 右上角 标记图标
+fightLeftImgPath = "base\\fight_left.png"
+fightRightImgPath = "base\\fight_right.png"
 fightLeftImg = cv2.imread(fightLeftImgPath)
 fightRightImg = cv2.imread(fightRightImgPath)
+
+#加载中 识别标记
+overImgPath = "base\\over.png"
 overImg = cv2.imread(overImgPath)
 
-jjcPrepareBtn = cat_img(jjcPrepareImg,959,1009,241,53)
+
+
+
+
+
+
+
+
+
+
+
+
 jjcHuozhadanImg = cat_img(jjcPrepareImg,449,600,100,100)
-prepareBtn = cat_img(prepareImg,952,1010,200,50)
+
 dead1Img = cat_img(dead1Img,50,50,100,100)
 dead2Img = cat_img(dead2Img,50,50,100,100)
 dead3Img = cat_img(dead3Img,50,50,100,100)
@@ -66,8 +93,16 @@ rightList = [{
 
 
 #界面===============================================================================================
-def check_main_view(img):
+def check_windows(img):
+    #截取左下角 ,比较windows 开始按钮
+    btn = cat_img(img,20,1060,40,40)
+    matchWindows = classify_hist_with_split(btn,windowsImg)
+    print("比较桌面",matchWindows)
+    if matchJjc>0.5:
+        return True
+    return False
 
+def check_main_view(img):
     btn = cat_img(img,360,978,80,80)
     matchJjc = (classify_hist_with_split(btn,jjcEnterImg))
     print("比较竞技场入口",matchJjc)
@@ -205,6 +240,13 @@ def casting(leftIndex):
         m.click(resetX,1020)
         time.sleep(0.1)
         
+#撤退
+def retreat():
+    m.click(2,2)
+    time.sleep(0.2)
+    m.click(1040,40)
+    time.sleep(0.2)
+    m.click(540,740)
         
 #敌方相关操作=========================================================        
         

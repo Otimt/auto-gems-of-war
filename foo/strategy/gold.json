@@ -16,7 +16,8 @@
     },{
         "x":319,
         "y":699,
-        "name":"duyaodashi",
+        "name":"",
+        "fullName":"术士",
         "target":false,
         "castImg":null,
         "order":5
@@ -24,6 +25,7 @@
         "x":319,
         "y":952,
         "name":"",
+        "fullName":"术士",
         "target":false,
         "castImg":null,
         "order":1
