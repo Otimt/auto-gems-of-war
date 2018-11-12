@@ -8,14 +8,7 @@ import gc
 import pythoncom
 import json
 
-logging.basicConfig(
-    level=logging.DEBUG,#控制台打印的日志级别
-    filename='new.log',
-    filemode='a',##模式，有w和a，w就是写模式，每次都会重新写日志，覆盖之前的日志
-    #a是追加模式，默认如果不写的话，就是追加模式
-    format= '%(asctime)s - %(pathname)s[line:%(lineno)d] - %(levelname)s: %(message)s'
-    #日志格式
-)
+
 
 
 
@@ -23,13 +16,12 @@ from common.check_bomb import find_can_bomb_point,check64
 from common.img_process import classify_hist_with_split,cat_img
 from common.game_action import *
 from common.window_action import *
-from common.loop import initKeyboardHook
+from common.loop import Loop
 
 # import the module
 from pymouse import PyMouse
 m = PyMouse()
 
-logging.info("启动auto_jjc")
 
 #火鸟炸弹
 bombJsonPath = "strategy/bomb.json"
@@ -42,7 +34,7 @@ weekJsonPath = "strategy/week.json"
 #刑天
 xingJsonPath = "strategy/xing.json"
 
-strategy = json.load(open(weekJsonPath,'r'))
+strategy = json.load(open(xingJsonPath,'r'))
 #我方数组
 leftList = strategy["team"]
 #对leftList按order排序
@@ -133,28 +125,10 @@ def moveOnce():
         
         
         
-
-
-
-
-    
-
-
-
-
-
-
-
-    
-
-
-    
-
-
-
 def main():
     #初始化键盘钩子 监听 键盘事件
-    initKeyboardHook(moveOnce)
+    Loop().initKeyboardHook(moveOnce)
+    
             
     # 进入循环，如不手动关闭，程序将一直处于监听状态dd
     pythoncom.PumpMessages()

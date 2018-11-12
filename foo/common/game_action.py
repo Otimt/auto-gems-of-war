@@ -98,7 +98,7 @@ def check_windows(img):
     btn = cat_img(img,20,1060,40,40)
     matchWindows = classify_hist_with_split(btn,windowsImg)
     print("比较桌面",matchWindows)
-    if matchJjc>0.5:
+    if matchWindows>0.5:
         return True
     return False
 
@@ -246,7 +246,10 @@ def retreat():
     time.sleep(0.2)
     m.click(1040,40)
     time.sleep(0.2)
-    m.click(540,740)
+    m.click(1000,800)
+    time.sleep(0.2)
+    m.click(1200,700)
+    time.sleep(2)
         
 #敌方相关操作=========================================================        
         
