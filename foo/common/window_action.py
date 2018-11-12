@@ -4,6 +4,10 @@ from pymouse import PyMouse
 m = PyMouse()
 
 #window操作========================================================================================================
+#关机
+def shutdown():
+    print("关机")
+
 #鼠标点击
 def mouse_click(x,y):
     m.click(x, y)
