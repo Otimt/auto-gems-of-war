@@ -3,38 +3,38 @@
         "x":319,
         "y":189,
         "name":"shanmaifensuizhe",
-        "fullName":"å±±è„‰ç²‰ç¢è€…",
-        "target":false,
+        "fullName":"É½Âö·ÛËéÕß",
+        "target":true,
         "castImg":null,
         "order":3
     },{
         "x":319,
         "y":442,
         "name":"duyaodashi",
-        "fullName":"æ¯’è¯å¤§å¸ˆ",
-        "target":false,
+        "fullName":"¶¾Ò©´óÊ¦",
+        "target":true,
         "castImg":null,
-        "order":2
+        "order":4
     },{
         "x":319,
         "y":699,
         "name":"xingtian",
-        "fullName":"åˆ‘å¤©",
-        "target":false,
+        "fullName":"ĞÌÌì",
+        "target":true,
         "castImg":null,
         "order":5
     },{
         "x":319,
         "y":952,
-        "name":"diweila",
-        "fullName":"è¿ªç»´æ‹‰",
-        "target":false,
+        "name":"gelifu-shiyu",
+        "fullName":"¸ñÀï·ò¡¤Ê¯Óğ",
+        "target":true,
         "castImg":null,
-        "order":4
+        "order":1
     }],
     "weightMap" : {
         "w":11,
-        "y":2,
+        "y":4,
         "g":5,
         "n":4,
         "p":2,
@@ -42,3 +42,4 @@
         "b":2
     }
 }
+

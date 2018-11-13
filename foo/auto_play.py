@@ -16,7 +16,7 @@ from common.check_bomb import find_can_bomb_point,check64
 from common.img_process import classify_hist_with_split,cat_img
 from common.game_action import *
 from common.window_action import *
-from common.loop import initKeyboardHook
+from common.loop import Loop
 
 # import the module
 from pymouse import PyMouse
@@ -136,7 +136,7 @@ def moveOnce():
 def main():
     
     #初始化键盘钩子 监听 键盘事件
-    initKeyboardHook(moveOnce)
+    Loop().initKeyboardHook(moveOnce)
     
     # 进入循环，如不手动关闭，程序将一直处于监听状态dd
     pythoncom.PumpMessages()
