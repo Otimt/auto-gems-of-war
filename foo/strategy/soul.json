@@ -2,39 +2,43 @@
     "team":[{
         "x":319,
         "y":189,
-        "name":"shanmaifensuizhe",
+        "name":"xkbs",
+        "fullName":"虚空匕首",
         "target":false,
         "castImg":null,
         "order":2
     },{
         "x":319,
         "y":442,
-        "name":"nvyao",
-        "target":true,
+        "name":"longzhihun",
+        "fullName":"龙之魂",
+        "target":false,
         "castImg":null,
         "order":3
     },{
         "x":319,
         "y":699,
-        "name":"hunsaila",
-        "target":true,
+        "name":"bm",
+        "fullName":"暴民",
+        "target":false,
         "castImg":null,
         "order":1
     },{
         "x":319,
         "y":952,
         "name":"",
+        "fullName":"术士",
         "target":false,
         "castImg":null,
         "order":1
     }],
     "weightMap" : {
-        "w":11,
-        "y":4,
-        "g":3,
+        "w":3,
+        "y":2,
+        "g":2,
         "n":2,
         "p":5,
-        "r":3,
-        "b":2
+        "r":4,
+        "b":3
     }
 }

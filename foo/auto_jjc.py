@@ -34,7 +34,7 @@ weekJsonPath = "strategy/week.json"
 #刑天
 xingJsonPath = "strategy/xing.json"
 
-strategy = json.load(open(xingJsonPath,'r'))
+strategy = json.load(open(weekJsonPath,'r'))
 #我方数组
 leftList = strategy["team"]
 #对leftList按order排序
@@ -64,6 +64,8 @@ def moveOnce():
         #检测到桌面，不执行任何动作，方便切换到cmd 结束进程
         return True
     if(check_main_view(img)):
+        #点击竞技场入口
+        m.click(360,978)
         return True
     if check_jjc_prepare(img):
         #竞技场准备中，刷火炸弹
@@ -114,6 +116,8 @@ def moveOnce():
                 
         else:
             print("敌方全灭")
+    #elif check_casting(img):
+    #    clickEnemy()
     else:
         continue_click()
 

@@ -13,8 +13,8 @@ windowsImg = cv2.imread(windowsImgPath)
 windowsImg = cat_img(windowsImg,20,1060,40,40)
 
 #主界面
-jjcEnterPath = "base\\jjc_enter.png"
-jjcEnterImg = cv2.imread(jjcEnterPath)
+mainPath = "base\\main.png"
+mainImg = cv2.imread(mainPath)
 
 #探索 准备界面
 prepareImgPath = "base\\prepare.png"
@@ -38,6 +38,10 @@ dead1Img  = cv2.imread(dead1ImgPath)
 dead2Img  = cv2.imread(dead2ImgPath)
 dead3Img  = cv2.imread(dead3ImgPath)
 dead4Img  = cv2.imread(dead4ImgPath)
+
+#施法中 需要点击 敌人或自己
+castingPath = "base\\select-an-enemy.png"
+castingImg  = cv2.imread(castingPath)
 
 #战斗中 左上角 右上角 标记图标
 fightLeftImgPath = "base\\fight_left.png"
@@ -70,22 +74,22 @@ dead4Img = cat_img(dead4Img,50,50,100,100)
 
 #敌方数组
 rightList = [{
-    "x":1602,
+    "x":1722,
     "y":189,
     "live":True,
     "deadImg":dead1Img
 },{
-    "x":1602,
+    "x":1722,
     "y":442,
     "live":True,
     "deadImg":dead2Img
 },{
-    "x":1602,
+    "x":1722,
     "y":699,
     "live":True,
     "deadImg":dead3Img
 },{
-    "x":1602,
+    "x":1722,
     "y":952,
     "live":True,
     "deadImg":dead4Img
@@ -102,14 +106,19 @@ def check_windows(img):
         return True
     return False
 
+#识别主界面
 def check_main_view(img):
     btn = cat_img(img,360,978,80,80)
+    jjcEnterImg = cat_img(mainImg,360,978,80,80)
     matchJjc = (classify_hist_with_split(btn,jjcEnterImg))
-    print("比较竞技场入口",matchJjc)
-    print(len(jjcEnterImg))
-    if matchJjc>0.5:
-        #点击竞技场入口
-        m.click(360,978)
+    
+    btn = cat_img(img,560,978,80,80)
+    gameEnterImg = cat_img(mainImg,560,978,80,80)
+    matchGame = (classify_hist_with_split(btn,gameEnterImg))
+    
+    print("识别主界面：matchJjc",matchJjc,"matchGame",matchGame)
+    
+    if matchJjc>0.5 and matchGame>0.5:
         return True
 
 def check_jjc_prepare(img):
@@ -151,7 +160,25 @@ def check_prepare(img):
         print("未检查到准备中")
         return False
         
-        
+
+#识别施法中
+def check_casting(img):
+    leftImg = cat_img(img,55,55,64,64)
+    rightImg = cat_img(img,1865,55,64,64)
+    
+    castingLeftImg = cat_img(castingImg,55,55,64,64)
+    castingRightImg = cat_img(castingImg,1865,55,64,64)
+    
+    left = classify_hist_with_split(castingLeftImg,leftImg)
+    right = classify_hist_with_split(castingRightImg,rightImg)
+    print("识别施法中界面 left",left,"right",right)
+    if (left>0.5) or (right>0.5):
+        print("施法中")
+        return True
+    else :
+        print("未施法中")
+        return False
+
 #识别战斗中界面
 def check_fight(img):
     leftImg = cat_img(img,55,55,64,64)
@@ -209,14 +236,17 @@ def continue_click():
     time.sleep(0.25)
     #点击选择升级
     m.click(resetX-400,950)
-    time.sleep(0.25)
+    time.sleep(0.15)
     m.click(resetX-400,950)
-    time.sleep(0.25)
+    time.sleep(0.15)
     #跳过每日活动
     m.click(1902,950)
-    time.sleep(0.25)
+    time.sleep(0.2)
     m.click(1902,950)
-    time.sleep(0.25)
+    time.sleep(0.2)
+    m.click(1902,950)
+    time.sleep(0.2)
+    clickEnemy()
 
 #施法
 def casting(leftIndex):
@@ -225,20 +255,25 @@ def casting(leftIndex):
     if(obj["name"]):
     
         m.click(obj["x"],obj["y"])#选中军队
-        time.sleep(0.1)
+        time.sleep(0.15)
         m.click(950,950)#点击施法
         time.sleep(0.1)
         target=obj["target"]
         if target:
-            for index,obj in enumerate(rightList):
-                print("点击敌人",index,obj["live"])
-                if obj["live"]:
-                    m.click(obj["x"],obj["y"])
-                    time.sleep(0.1)
-                    m.click(resetX,1020)
-                    time.sleep(0.1)
+            clickEnemy()
         m.click(resetX,1020)
         time.sleep(0.1)
+        
+#点击敌人
+def clickEnemy():
+    for index,obj in enumerate(rightList):
+        print("点击敌人",index,obj["live"])
+        if obj["live"]:
+            m.click(obj["x"],obj["y"])
+            time.sleep(0.1)
+    m.click(resetX-400,950)
+    time.sleep(0.1)
+    
         
 #撤退
 def retreat():

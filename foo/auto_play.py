@@ -44,7 +44,8 @@ weekJsonPath = "strategy/week.json"
 #刑天
 xingJsonPath = "strategy/xing.json"
 
-strategy = json.load(open(bombJsonPath,'r'))
+#strategy = json.load(open(bombJsonPath,'r'))
+strategy = json.load(open(soulJsonPath,'r'))
 #我方数组
 leftList = strategy["team"]
 #对leftList按order排序
@@ -58,7 +59,8 @@ init_left(leftList)
 
 
 
-    
+#未识别可移动单元格次数
+uncheckedNum = 0
     
 #移动一步
 def moveOnce():
@@ -118,6 +120,8 @@ def moveOnce():
             del moveInfo,colorArr
         else:
             print("敌方全灭")
+    #elif check_casting(img):
+    #    clickEnemy()
     else:
         continue_click()
         

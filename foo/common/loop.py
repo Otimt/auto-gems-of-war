@@ -18,10 +18,11 @@ logging.basicConfig(
 
 class Loop():
 
-    def _init_():
+    def __init__(self,interval=2):
         self.mainProgress = None
         self.loopAction = None
         self.isLoop = False
+        self.interval=interval
     
     def worker(self,isLoop):
         while True:
@@ -39,7 +40,7 @@ class Loop():
                     logging.error('error 信息 出错误了')
                     #logging.critical('critial 信息')
                 
-            time.sleep(2)
+            time.sleep(self.interval)
 
     def onKeyboardEvent(self,event):
         
