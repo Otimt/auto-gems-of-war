@@ -3,7 +3,7 @@ import socket
 import json
 import time
 import sys
-import cv2
+
 sys.path.append('../')
 from common.window_action import *
 
@@ -27,8 +27,14 @@ while True:
             imgPath = "game2.jpg"
             window_capture(imgPath)
         elif (code == 'click'):
-            print("截图")
+            print("点击")
             mouse_click(data['x'],data['y'])
+        elif (code == 'keyboard'):
+            keyboard_press(data['key'])
+        elif (code == 'shutdown'):
+            print("关机")
+            shutdown()
+            
     time.sleep(1)
 
 client.close()
