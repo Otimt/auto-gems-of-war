@@ -110,13 +110,12 @@ def moveOnce():
                 time.sleep(0.1)
                 mouse_drag(hArr[x1],vArr[y1],hArr[x2],vArr[y2])
                 print(hArr[x1],vArr[y1],hArr[x2],vArr[y2])
-                time.sleep(1)
+                time.sleep(2)
             else:
-                global uncheckedNum
                 uncheckedNum = uncheckedNum+1
                 print("未识别可移动单元格",uncheckedNum)
-                if uncheckedNum > 3:
-                    # 10次识别不了可移动，点撤退
+                if uncheckedNum>10:
+                    #10次识别不了可移动，点撤退
                     retreat()
             del moveInfo,colorArr
         else:
