@@ -47,7 +47,7 @@ def find_can_bomb_point(colorArr,weightMap={'w':5,'y':2,'g':5,'n':5,'p':4,'r':6,
         del  lastBombPoint[0]
         lastBombPoint.append([maxBomb["x1"],maxBomb["y1"]])
         print("上次爆破数组",lastBombPoint)
-    print(maxBomb)
+    print("maxBomb：", maxBomb)
     return maxBomb
 
 
