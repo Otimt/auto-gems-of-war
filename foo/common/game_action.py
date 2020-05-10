@@ -190,10 +190,10 @@ def check_fight(img):
         print("战斗中中")
         return True
     else :
-        print("未战斗中中")
+        print("未战斗中")
         return False
 
-    
+
 
 
 #我方相关操作=================================================================================
@@ -210,11 +210,11 @@ def init_left(list):
             #obj["castImg"] = castImg
     leftList = list
     return True
-    
 
 
 
-    
+
+
 #识别我方数组是否准备好
 def check_left(img):
     for obj in leftList:
@@ -229,7 +229,7 @@ def check_left(img):
 #点击继续
 resetX = 1266
 def continue_click():
-    
+
     m.click(resetX,1020)
     time.sleep(0.25)
     m.click(resetX,1020)
@@ -246,6 +246,11 @@ def continue_click():
     time.sleep(0.2)
     m.click(1902,950)
     time.sleep(0.2)
+    #跳过故事模式
+    m.click(1100,850)
+    time.sleep(0.2)
+    m.click(1100,850)
+    time.sleep(0.2)
     clickEnemy()
 
 #施法
@@ -253,7 +258,7 @@ def casting(leftIndex):
     obj = leftList[leftIndex]
     #if(obj["ready"]):
     if(obj["name"]):
-    
+
         m.click(obj["x"],obj["y"])#选中军队
         time.sleep(0.15)
         m.click(950,950)#点击施法
@@ -263,7 +268,7 @@ def casting(leftIndex):
             clickEnemy()
         m.click(resetX,1020)
         time.sleep(0.1)
-        
+
 #点击敌人
 def clickEnemy():
     for index,obj in enumerate(rightList):
@@ -273,8 +278,8 @@ def clickEnemy():
             time.sleep(0.1)
     m.click(resetX-400,950)
     time.sleep(0.1)
-    
-        
+
+
 #撤退
 def retreat():
     m.click(2,2)
@@ -283,8 +288,14 @@ def retreat():
     time.sleep(0.2)
     m.click(1000,800)
     time.sleep(0.2)
+    m.click(1000,700)
+    time.sleep(0.2)
+    m.click(1000,900)
+    time.sleep(0.2)
+    m.click(1830,70)
+    time.sleep(0.2)
     m.click(1200,700)
-    time.sleep(2)
+    time.sleep(1)
         
 #敌方相关操作=========================================================        
         

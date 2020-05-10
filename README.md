@@ -83,3 +83,6 @@ except (IOError ,ZeroDivisionError),e:
 #### 日志
 1. 异常日志
 2. 开局日志
+
+#### 使用说明
+S键开始，F键停止
