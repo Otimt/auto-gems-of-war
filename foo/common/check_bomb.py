@@ -28,7 +28,7 @@ nImg = cat_img(nImg,60,60,76,76)
 #三消算法===============================================================================================
 #查找最佳可消点
 lastBombPoint = [[-1,-1],[-2,-2],[-3,-3]]
-def find_can_bomb_point(colorArr,weightMap={'w':5,'y':2,'g':5,'n':5,'p':4,'r':6,'b':2,0:0,None:0}):
+def find_can_bomb_point(colorArr,weightMap={'w':20,'y':2,'g':5,'n':5,'p':4,'r':6,'b':2,0:0,None:0}):
     global lastBombPoint
     maxBomb = None
     for y in range(8):
@@ -41,13 +41,15 @@ def find_can_bomb_point(colorArr,weightMap={'w':5,'y':2,'g':5,'n':5,'p':4,'r':6,
                 bx = bombInfo["x1"]
                 by = bombInfo["y1"]
                 #防止识别失败,连续移动同一错误位置，导致游戏不能继续
-                if( (bx!=lastBombPoint[0][0] and by!=lastBombPoint[0][1]) or (bx!=lastBombPoint[1][0] and by!=lastBombPoint[1][1]) or (bx!=lastBombPoint[2][0] and by!=lastBombPoint[2][1])):
+                if [bx, by] not in lastBombPoint or not (lastBombPoint[0] == lastBombPoint[1] == lastBombPoint[2]):
                     maxBomb = bombInfo
+                else:
+                    print("识别失败,连续移动同一错误位置 lastBombPoint:", lastBombPoint, " bx:", bx, " by:", by)
     if maxBomb:
         del  lastBombPoint[0]
         lastBombPoint.append([maxBomb["x1"],maxBomb["y1"]])
         print("上次爆破数组",lastBombPoint)
-    print(maxBomb)
+    print("maxBomb：", maxBomb)
     return maxBomb
 
 
@@ -124,8 +126,8 @@ def is_can_bomb(arr,x,y,weightMap):
             "y1":y,
             "x2":x2,
             "y2":y2,
-        } 
-    
+        }
+        # print("weightMap:", weightMap, " b1:", b1, " t1", t1, " r1:", r1, " l1:", l1, " weight: ",tWeight,rWeight,bWeight,lWeight,weight)
     return res
     
     
