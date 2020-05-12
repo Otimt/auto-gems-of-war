@@ -1,5 +1,5 @@
 import cv2
-from common.img_process import classify_hist_with_split,cat_img
+from common.img_process import classify_hist_with_split,cat_img,get_color
 
 rImgPath = "base\\red.jpg"
 wImgPath = "base\\white.jpg"
@@ -143,7 +143,9 @@ def check64(img,hArr,vArr):
         for yIndex,yCenter in enumerate(vArr):
             imgPart = cat_img(img,xCenter,yCenter,imgSize,imgSize)
     #         imgArr[yIndex][xIndex] = imgPart
-            color = compare_color(imgPart)
+            # color = compare_color(imgPart)
+            color = get_color(imgPart)
+
             colorArr[yIndex][xIndex] = color
             if (not color) and (uncheckedNum<5):
                 uncheckedNum  += 1
