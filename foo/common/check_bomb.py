@@ -143,8 +143,11 @@ def check64(img,hArr,vArr):
         for yIndex,yCenter in enumerate(vArr):
             imgPart = cat_img(img,xCenter,yCenter,imgSize,imgSize)
     #         imgArr[yIndex][xIndex] = imgPart
-            # color = compare_color(imgPart)
-            color = get_color(imgPart)
+            # 最后一排中间两个图标会被风暴影响，使用图片对比，其他判断颜色
+            if (xIndex == 3 or xIndex == 4) and yIndex == 7:
+                color = compare_color(imgPart)
+            else:
+                color = get_color(imgPart)
 
             colorArr[yIndex][xIndex] = color
             if (not color) and (uncheckedNum<5):
