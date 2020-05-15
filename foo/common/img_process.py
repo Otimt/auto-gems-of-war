@@ -203,6 +203,14 @@ def getColorList():
     color_list.append(upper_purple)
     dict['p'] = color_list
 
+    # 岩石
+    lower_purple = np.array([50, 33, 43])
+    upper_purple = np.array([95, 75, 182])
+    color_list = []
+    color_list.append(lower_purple)
+    color_list.append(upper_purple)
+    dict['s'] = color_list
+
     return dict
 
 

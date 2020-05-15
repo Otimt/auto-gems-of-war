@@ -8,6 +8,7 @@ bImgPath = "base\\blue.jpg"
 pImgPath = "base\\purple.jpg"
 yImgPath = "base\\yellow.jpg"
 nImgPath = "base\\brown.jpg"
+sImgPath = "base\\stone.jpg"
 
 rImg = cv2.imread(rImgPath)
 wImg = cv2.imread(wImgPath)
@@ -16,6 +17,7 @@ bImg = cv2.imread(bImgPath)
 pImg = cv2.imread(pImgPath)
 yImg = cv2.imread(yImgPath)
 nImg = cv2.imread(nImgPath)
+sImg = cv2.imread(sImgPath)
 
 rImg = cat_img(rImg,60,60,76,76)
 wImg = cat_img(wImg,60,60,76,76)
@@ -24,6 +26,7 @@ bImg = cat_img(bImg,60,60,76,76)
 pImg = cat_img(pImg,60,60,76,76)
 yImg = cat_img(yImg,60,60,76,76)
 nImg = cat_img(nImg,60,60,76,76)
+sImg = cat_img(sImg,60,60,76,76)
 
 #三消算法===============================================================================================
 #查找最佳可消点
@@ -54,22 +57,24 @@ def find_can_bomb_point(colorArr,weightMap={'w':20,'y':2,'g':5,'n':5,'p':4,'r':6
 
 
 def is_can_bomb(arr,x,y,weightMap):
-    
-    
+    if arr[y][x] == 's':
+        return False
+
     lWeight = 0
     tWeight = 0
     rWeight = 0
     bWeight = 0
-    
-    t2 = arr[y-2][x] if y-2>=0 else 0
-    t1 = arr[y-1][x] if y-1>=0 else 0
-    b1 = arr[y+1][x] if y+1<len(arr) else 0
-    b2 = arr[y+2][x] if y+2<len(arr) else 0
-    l2 = arr[y][x-2] if x-2>=0 else 0
-    l1 = arr[y][x-1] if x-1>=0 else 0
-    r1 = arr[y][x+1] if x+1<len(arr) else 0
-    r2 = arr[y][x+2] if x+2<len(arr) else 0
-    
+
+    t2 = arr[y-2][x] if y-2>=0 and arr[y-2][x] != 's'else 0
+    t1 = arr[y-1][x] if y-1>=0 and arr[y-1][x] != 's' else 0
+    b1 = arr[y+1][x] if y+1<len(arr) and arr[y+1][x] != 's' else 0
+    b2 = arr[y+2][x] if y+2<len(arr) and arr[y+2][x] != 's' else 0
+    l2 = arr[y][x-2] if x-2>=0 and arr[y][x-2] != 's' else 0
+    l1 = arr[y][x-1] if x-1>=0 and arr[y][x-1] != 's' else 0
+    r1 = arr[y][x+1] if x+1<len(arr) and arr[y][x+1] != 's' else 0
+    r2 = arr[y][x+2] if x+2<len(arr) and arr[y][x+2] != 's' else 0
+
+
     if (b1==l1 and l1==r1) or (b1==l1 and l1==l2) or (b1==r1 and r1==r2) or (b1==t1 and t1==t2):
         bWeight = weightMap[b1]
         if (l1==l2 and l1==r1) or (r1==r2 and l1==r1):
@@ -114,7 +119,7 @@ def is_can_bomb(arr,x,y,weightMap):
         direction = "r"
         color = r1
         x2 = x+1
-   
+
     if weight==0:
          res = False
     else:
@@ -181,3 +186,5 @@ def compare_color(imgPart):
         return "n"
     if (classify_hist_with_split(imgPart,gImg)>0.48):
         return "g"
+    if (classify_hist_with_split(imgPart,sImg)>0.48):
+        return "s"
