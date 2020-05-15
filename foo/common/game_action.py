@@ -18,8 +18,10 @@ mainImg = cv2.imread(mainPath)
 
 #探索 准备界面
 prepareImgPath = "base\\prepare.png"
+refreshImgPath = "base\\refresh.png"
 prepareImg = cv2.imread(prepareImgPath)
 prepareBtn = cat_img(prepareImg,952,1010,200,50)
+refreshBtn = cv2.imread(refreshImgPath)
 
 #pvp 休闲战 准备界面
 jjcPrepareImgPath = "base\\jjc-prepare.png"
@@ -144,6 +146,23 @@ def check_jjc_prepare(img):
         return False
 
 
+# 识别玩家对决
+def check_PVP(img):
+    curPrepareBtn =  cat_img(img,960,1010,368,96)
+    if (classify_hist_with_split(curPrepareBtn,prepareBtn)>0.5):
+        #准备中
+        #重置敌方数组
+        reset_right_list()
+        print("检查到准备中")
+        #点击继续
+        m.click(1002,1020)
+        time.sleep(0.25)
+        return True
+    else:
+        print("未检查到准备中")
+        return False
+
+
 #识别准备
 def check_prepare(img):
     curPrepareBtn =  cat_img(img,952,1010,200,50)
@@ -179,6 +198,18 @@ def check_casting(img):
         print("未施法中")
         return False
 
+
+# 识别施法准备, flag = 0己方，flag = 1 敌方
+def check_can_cast(img, flag):
+    res = []
+    xBall = 190 + flag * (1920 - 2 * 190)
+    xBack = xBall - 160 * flag + 80
+    for i in range(4):
+        y = i * 255 + 75
+        if (img[y][xBall] == img[y][xBack]).all():
+            res.append(i)
+    return res
+
 #识别战斗中界面
 def check_fight(img):
     leftImg = cat_img(img,55,55,64,64)
@@ -186,7 +217,7 @@ def check_fight(img):
     left = classify_hist_with_split(fightLeftImg,leftImg)
     right = classify_hist_with_split(fightRightImg,rightImg)
     print("识别战斗中界面 left",left,"right",right)
-    if (left>0.5) or (right>0.5):
+    if (left>0.46) and (right>0.63):
         print("战斗中中")
         return True
     else :
@@ -256,6 +287,8 @@ def continue_click():
 #施法
 def casting(leftIndex):
     obj = leftList[leftIndex]
+    print("leftList", leftList)
+    print("obj", obj)
     #if(obj["ready"]):
     if(obj["name"]):
 
@@ -283,7 +316,7 @@ def clickEnemy():
 #撤退
 def retreat():
     m.click(2,2)
-    time.sleep(0.2)
+    time.sleep(0.1)
     m.click(1040,40)
     time.sleep(0.2)
     m.click(1000,800)
@@ -295,6 +328,8 @@ def retreat():
     m.click(1830,70)
     time.sleep(0.2)
     m.click(1200,700)
+    time.sleep(0.1)
+    m.click(1000,850)
     time.sleep(1)
         
 #敌方相关操作=========================================================        

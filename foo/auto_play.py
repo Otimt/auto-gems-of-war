@@ -43,11 +43,9 @@ soulJsonPath = "strategy/soul.json"
 weekJsonPath = "strategy/week.json"
 #刑天
 xingJsonPath = "strategy/xing.json"
-#测试
-testJsonPath = "strategy/test.json"
 
 #strategy = json.load(open(bombJsonPath,'r'))
-strategy = json.load(open(testJsonPath,'r'))
+strategy = json.load(open(soulJsonPath,'r'))
 #我方数组
 leftList = strategy["team"]
 #对leftList按order排序
@@ -94,16 +92,16 @@ def moveOnce():
                 x2 = moveInfo["x2"]
                 y2 = moveInfo["y2"]
                 if moveInfo["weight"] <= 10:
+                    # 施法
+                    arrCast = check_can_cast(img, 0)
+                    print("arrCast", arrCast)
+                    if len(arrCast) > 0:
+                        casting(arrCast[0])
                     
-                    casting(0)
-                    casting(1)
-                    casting(2)
-                    casting(3)
-
-
-
-
-
+                    
+                    
+                    
+                    
                     m.click(hArr[x1],vArr[y1])
                     time.sleep(0.1)
                     m.click(hArr[x1],vArr[y1])
@@ -112,13 +110,12 @@ def moveOnce():
                 time.sleep(0.1)
                 mouse_drag(hArr[x1],vArr[y1],hArr[x2],vArr[y2])
                 print(hArr[x1],vArr[y1],hArr[x2],vArr[y2])
-                time.sleep(0.1)
+                time.sleep(2)
             else:
-                global uncheckedNum
                 uncheckedNum = uncheckedNum+1
                 print("未识别可移动单元格",uncheckedNum)
-                if uncheckedNum > 3:
-                    # 10次识别不了可移动，点撤退
+                if uncheckedNum>10:
+                    #10次识别不了可移动，点撤退
                     retreat()
             del moveInfo,colorArr
         else:
