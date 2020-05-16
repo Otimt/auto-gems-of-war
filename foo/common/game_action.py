@@ -5,6 +5,7 @@ import cv2
 import time
 from common.img_process import classify_hist_with_split,cat_img
 from pymouse import PyMouse
+import numpy as np
 m = PyMouse()
 
 #操作系统桌面
@@ -148,18 +149,20 @@ def check_jjc_prepare(img):
 
 # 识别玩家对决
 def check_PVP(img):
-    curPrepareBtn =  cat_img(img,960,1010,368,96)
-    if (classify_hist_with_split(curPrepareBtn,prepareBtn)>0.5):
-        #准备中
+    curRefreshBtn =  cat_img(img,960,1010,368,96)
+    rate = classify_hist_with_split(curRefreshBtn,refreshBtn)
+    print("classify_hist_with_split(curRefreshBtn,refreshBtn)", rate)
+    if (rate > 0.8):
+        #识别到PVP
         #重置敌方数组
         reset_right_list()
-        print("检查到准备中")
+        print("检查到PVP")
         #点击继续
-        m.click(1002,1020)
+        m.click(960, 540)
         time.sleep(0.25)
         return True
     else:
-        print("未检查到准备中")
+        print("未检查到PVP")
         return False
 
 
@@ -206,9 +209,49 @@ def check_can_cast(img, flag):
     xBack = xBall - 160 * flag + 80
     for i in range(4):
         y = i * 255 + 75
+        if (img[y][xBack] < np.array([40,40,40])).all():
+            continue
         if (img[y][xBall] == img[y][xBack]).all():
             res.append(i)
     return res
+
+
+# 识别敌人能量，返回能量大于7的敌人
+def check_enemy_energy(img):
+    res = []
+    xBall = 1730
+    xBack = 1650
+    # 施法中
+    for i in range(4):
+        y = i * 255 + 75
+        if (img[y][xBack] < np.array([40,40,40])).all():
+            continue
+        if (img[y][xBall] == img[y][xBack]).all():
+            res.append(i)
+    # 能量大于10
+    for i in range(4):
+        y = i * 255 + 95
+        if (img[y][1703] == np.array([255,255,255])).all():
+            res.append(i)
+    # 能量为8,9
+    for i in range(4):
+        y = i * 255 + 89
+        if (img[y][1716] == np.array([255,255,255])).all():
+            res.append(i)
+
+    return res
+
+
+# 识别活着的人, flag = 0己方，flag = 1 敌方
+def check_alive(img, flag):
+    res = [0, 1, 2, 3]
+    xBack = 270 + flag * (1920 - 2 * 270)
+    for i in range(4):
+        y = i * 255 + 75
+        if (img[y][xBack] < np.array([40,40,40])).all():
+            res.remove(i)
+    return res
+
 
 #识别战斗中界面
 def check_fight(img):
@@ -217,7 +260,7 @@ def check_fight(img):
     left = classify_hist_with_split(fightLeftImg,leftImg)
     right = classify_hist_with_split(fightRightImg,rightImg)
     print("识别战斗中界面 left",left,"right",right)
-    if (left>0.46) and (right>0.63):
+    if (left>0.43) and (right>0.63):
         print("战斗中中")
         return True
     else :
@@ -296,10 +339,10 @@ def casting(leftIndex):
         time.sleep(0.15)
         m.click(950,950)#点击施法
         time.sleep(0.1)
-        target=obj["target"]
-        if target:
-            clickEnemy()
-        m.click(resetX,1020)
+        # target=obj["target"]
+        # if target:
+        #     clickEnemy()
+        m.click(1800,1020)
         time.sleep(0.1)
 
 #点击敌人
