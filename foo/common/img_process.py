@@ -1,6 +1,8 @@
 #图像处理相关方法
 
 import cv2
+import numpy as np
+import collections
 
 
 #截取图片中心
@@ -110,4 +112,124 @@ def Hamming_distance(hash1,hash2):
     for index in range(len(hash1)):  
         if hash1[index] != hash2[index]:  
             num += 1  
-    return num  
+    return num
+
+
+def getColorList():
+    dict = collections.defaultdict(list)
+
+    # 棕色
+    # lower_black = np.array([0, 60, 26])
+    # upper_black = np.array([15, 130, 160])
+    # color_list = []
+    # color_list.append(lower_black)
+    # color_list.append(upper_black)
+    # dict['n'] = color_list
+    # 棕色2
+    lower_black = np.array([155, 60, 26])
+    upper_black = np.array([180, 130, 160])
+    color_list = []
+    color_list.append(lower_black)
+    color_list.append(upper_black)
+    dict['n'] = color_list
+
+    # 白色
+    lower_white = np.array([0, 0, 180])
+    upper_white = np.array([50, 52, 255])
+    color_list = []
+    color_list.append(lower_white)
+    color_list.append(upper_white)
+    dict['w'] = color_list
+    # 白色2
+    lower_white = np.array([0, 26, 143])
+    upper_white = np.array([10, 255, 255])
+    color_list = []
+    color_list.append(lower_white)
+    color_list.append(upper_white)
+    dict['w2'] = color_list
+    # 白色3（黑色部分）
+    # lower_white = np.array([100, 0, 0])
+    # upper_white = np.array([180, 76, 76])
+    # color_list = []
+    # color_list.append(lower_white)
+    # color_list.append(upper_white)
+    # dict['w3'] = color_list
+
+    # 红色
+    lower_red = np.array([0, 180, 135])
+    upper_red = np.array([5, 255, 255])
+    color_list = []
+    color_list.append(lower_red)
+    color_list.append(upper_red)
+    dict['r'] = color_list
+
+    # 红色2
+    lower_red = np.array([175, 180, 135])
+    upper_red = np.array([180, 255, 255])
+    color_list = []
+    color_list.append(lower_red)
+    color_list.append(upper_red)
+    dict['r'] = color_list
+
+    # 黄色
+    lower_yellow = np.array([16, 97, 138])
+    upper_yellow = np.array([26, 230, 255])
+    color_list = []
+    color_list.append(lower_yellow)
+    color_list.append(upper_yellow)
+    dict['y'] = color_list
+
+    # 绿色
+    lower_green = np.array([43, 148, 107])
+    upper_green = np.array([64, 234, 236])
+    color_list = []
+    color_list.append(lower_green)
+    color_list.append(upper_green)
+    dict['g'] = color_list
+
+    # 蓝色
+    lower_blue = np.array([91, 122, 112])
+    upper_blue = np.array([121, 255, 255])
+    color_list = []
+    color_list.append(lower_blue)
+    color_list.append(upper_blue)
+    dict['b'] = color_list
+
+    # 紫色
+    lower_purple = np.array([130, 153, 115])
+    upper_purple = np.array([148, 231, 255])
+    color_list = []
+    color_list.append(lower_purple)
+    color_list.append(upper_purple)
+    dict['p'] = color_list
+
+    # 岩石
+    lower_purple = np.array([50, 33, 43])
+    upper_purple = np.array([95, 75, 182])
+    color_list = []
+    color_list.append(lower_purple)
+    color_list.append(upper_purple)
+    dict['s'] = color_list
+
+    return dict
+
+
+def get_color(frame):
+    hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
+    maxsum = -100
+    color = None
+    color_dict = getColorList()
+    for d in color_dict:
+        mask = cv2.inRange(hsv, color_dict[d][0], color_dict[d][1])
+        cv2.imwrite(d + '.jpg', mask)
+        binary = cv2.threshold(mask, 127, 255, cv2.THRESH_BINARY)[1]
+        binary = cv2.dilate(binary, None, iterations=2)
+        img, cnts, hiera = cv2.findContours(binary.copy(), cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+        sum = 0
+        for c in cnts:
+            sum += cv2.contourArea(c)
+        if sum > maxsum:
+            maxsum = sum
+            color = d
+
+    return color[0]

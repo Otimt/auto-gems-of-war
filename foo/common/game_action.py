@@ -5,6 +5,7 @@ import cv2
 import time
 from common.img_process import classify_hist_with_split,cat_img
 from pymouse import PyMouse
+import numpy as np
 m = PyMouse()
 
 #操作系统桌面
@@ -18,8 +19,10 @@ mainImg = cv2.imread(mainPath)
 
 #探索 准备界面
 prepareImgPath = "base\\prepare.png"
+refreshImgPath = "base\\refresh.png"
 prepareImg = cv2.imread(prepareImgPath)
 prepareBtn = cat_img(prepareImg,952,1010,200,50)
+refreshBtn = cv2.imread(refreshImgPath)
 
 #pvp 休闲战 准备界面
 jjcPrepareImgPath = "base\\jjc-prepare.png"
@@ -144,6 +147,25 @@ def check_jjc_prepare(img):
         return False
 
 
+# 识别玩家对决
+def check_PVP(img):
+    curRefreshBtn =  cat_img(img,960,1010,368,96)
+    rate = classify_hist_with_split(curRefreshBtn,refreshBtn)
+    print("classify_hist_with_split(curRefreshBtn,refreshBtn)", rate)
+    if (rate > 0.8):
+        #识别到PVP
+        #重置敌方数组
+        reset_right_list()
+        print("检查到PVP")
+        #点击继续
+        m.click(960, 540)
+        time.sleep(0.25)
+        return True
+    else:
+        print("未检查到PVP")
+        return False
+
+
 #识别准备
 def check_prepare(img):
     curPrepareBtn =  cat_img(img,952,1010,200,50)
@@ -179,6 +201,58 @@ def check_casting(img):
         print("未施法中")
         return False
 
+
+# 识别施法准备, flag = 0己方，flag = 1 敌方
+def check_can_cast(img, flag):
+    res = []
+    xBall = 190 + flag * (1920 - 2 * 190)
+    xBack = xBall - 160 * flag + 80
+    for i in range(4):
+        y = i * 255 + 75
+        if (img[y][xBack] < np.array([40,40,40])).all():
+            continue
+        if (img[y][xBall] == img[y][xBack]).all():
+            res.append(i)
+    return res
+
+
+# 识别敌人能量，返回能量大于7的敌人
+def check_enemy_energy(img):
+    res = []
+    xBall = 1730
+    xBack = 1650
+    # 施法中
+    for i in range(4):
+        y = i * 255 + 75
+        if (img[y][xBack] < np.array([40,40,40])).all():
+            continue
+        if (img[y][xBall] == img[y][xBack]).all():
+            res.append(i)
+    # 能量大于10
+    for i in range(4):
+        y = i * 255 + 95
+        if (img[y][1703] == np.array([255,255,255])).all():
+            res.append(i)
+    # 能量为8,9
+    for i in range(4):
+        y = i * 255 + 89
+        if (img[y][1716] == np.array([255,255,255])).all():
+            res.append(i)
+
+    return res
+
+
+# 识别活着的人, flag = 0己方，flag = 1 敌方
+def check_alive(img, flag):
+    res = [0, 1, 2, 3]
+    xBack = 270 + flag * (1920 - 2 * 270)
+    for i in range(4):
+        y = i * 255 + 75
+        if (img[y][xBack] < np.array([40,40,40])).all():
+            res.remove(i)
+    return res
+
+
 #识别战斗中界面
 def check_fight(img):
     leftImg = cat_img(img,55,55,64,64)
@@ -186,14 +260,14 @@ def check_fight(img):
     left = classify_hist_with_split(fightLeftImg,leftImg)
     right = classify_hist_with_split(fightRightImg,rightImg)
     print("识别战斗中界面 left",left,"right",right)
-    if (left>0.5) or (right>0.5):
+    if (left>0.43) and (right>0.63):
         print("战斗中中")
         return True
     else :
-        print("未战斗中中")
+        print("未战斗中")
         return False
 
-    
+
 
 
 #我方相关操作=================================================================================
@@ -210,11 +284,11 @@ def init_left(list):
             #obj["castImg"] = castImg
     leftList = list
     return True
-    
 
 
 
-    
+
+
 #识别我方数组是否准备好
 def check_left(img):
     for obj in leftList:
@@ -229,7 +303,7 @@ def check_left(img):
 #点击继续
 resetX = 1266
 def continue_click():
-    
+
     m.click(resetX,1020)
     time.sleep(0.25)
     m.click(resetX,1020)
@@ -246,24 +320,31 @@ def continue_click():
     time.sleep(0.2)
     m.click(1902,950)
     time.sleep(0.2)
+    #跳过故事模式
+    m.click(1100,850)
+    time.sleep(0.2)
+    m.click(1100,850)
+    time.sleep(0.2)
     clickEnemy()
 
 #施法
 def casting(leftIndex):
     obj = leftList[leftIndex]
+    print("leftList", leftList)
+    print("obj", obj)
     #if(obj["ready"]):
     if(obj["name"]):
-    
+
         m.click(obj["x"],obj["y"])#选中军队
         time.sleep(0.15)
         m.click(950,950)#点击施法
         time.sleep(0.1)
-        target=obj["target"]
-        if target:
-            clickEnemy()
-        m.click(resetX,1020)
+        # target=obj["target"]
+        # if target:
+        #     clickEnemy()
+        m.click(1800,1020)
         time.sleep(0.1)
-        
+
 #点击敌人
 def clickEnemy():
     for index,obj in enumerate(rightList):
@@ -273,18 +354,26 @@ def clickEnemy():
             time.sleep(0.1)
     m.click(resetX-400,950)
     time.sleep(0.1)
-    
-        
+
+
 #撤退
 def retreat():
     m.click(2,2)
-    time.sleep(0.2)
+    time.sleep(0.1)
     m.click(1040,40)
     time.sleep(0.2)
     m.click(1000,800)
     time.sleep(0.2)
+    m.click(1000,700)
+    time.sleep(0.2)
+    m.click(1000,900)
+    time.sleep(0.2)
+    m.click(1830,70)
+    time.sleep(0.2)
     m.click(1200,700)
-    time.sleep(2)
+    time.sleep(0.1)
+    m.click(1000,850)
+    time.sleep(1)
         
 #敌方相关操作=========================================================        
         

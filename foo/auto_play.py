@@ -92,11 +92,11 @@ def moveOnce():
                 x2 = moveInfo["x2"]
                 y2 = moveInfo["y2"]
                 if moveInfo["weight"] <= 10:
-                    
-                    casting(0)
-                    casting(1)
-                    casting(2)
-                    casting(3)
+                    # 施法
+                    arrCast = check_can_cast(img, 0)
+                    print("arrCast", arrCast)
+                    if len(arrCast) > 0:
+                        casting(arrCast[0])
                     
                     
                     

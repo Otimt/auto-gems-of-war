@@ -1,0 +1,44 @@
+{
+    "team":[{
+        "x":319,
+        "y":189,
+        "name":"xkbs",
+        "fullName":"虚空匕首",
+        "target":false,
+        "castImg":null,
+        "order":2
+    },{
+        "x":319,
+        "y":442,
+        "name":"longzhihun",
+        "fullName":"龙之魂",
+        "target":false,
+        "castImg":null,
+        "order":3
+    },{
+        "x":319,
+        "y":699,
+        "name":"bm",
+        "fullName":"暴民",
+        "target":false,
+        "castImg":null,
+        "order":1
+    },{
+        "x":319,
+        "y":952,
+        "name":"",
+        "fullName":"术士",
+        "target":false,
+        "castImg":null,
+        "order":1
+    }],
+    "weightMap" : {
+        "w":11,
+        "y":9,
+        "g":9,
+        "n":9,
+        "p":9,
+        "r":8,
+        "b":9
+    }
+}
